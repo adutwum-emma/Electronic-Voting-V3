@@ -1364,7 +1364,7 @@ def edit_electorate(request, electorate_id):
 
 
 @login_required(login_url='authentication_app:login')
-#@permission_required('root_app.change_electorate', login_url='root_app:permissible_page')
+@permission_required('root_app.upload_electorate_with_excel', login_url='root_app:permissible_page')
 def electorate_excelupload(request):
 
     if request.method == 'POST':
@@ -1470,7 +1470,7 @@ def electorate_excelupload(request):
                 )
                 data_response.append(data)
 
-
+                return JsonResponse({'code':200, 'message':'Data uploaded successfully', 'response_data':data_response})
     else:
 
         programmes = Programme.objects.all()
@@ -1487,3 +1487,27 @@ def electorate_excelupload(request):
         }
 
         return render(request, 'root_app/electorate_excel_upload.html', context)
+
+def get_excel_data(request):
+
+    excel_file = request.FILES['excel_file']
+
+    book = workbook(excel_file)
+
+    sheet = book.active
+
+    rows = sheet.rows
+
+    headers = [ data.values for data in next(rows) ]
+
+    all_data =[]
+
+    for row in rows:
+
+        data_list = []
+
+        for key, value in zip(headers, row):
+            data_list.append(value.value)
+        all_data.append(data_list)
+
+    return JsonResponse()

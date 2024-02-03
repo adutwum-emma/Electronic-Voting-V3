@@ -178,6 +178,7 @@ class ElectorateProfile(models.Model):
             ('delete_electorate', 'Can delete electorate'),
             ('change_electorate', 'Can change electorate'),
             ('view_electorate', 'Can view electorate'),
+            ('upload_electorate_with_excel', 'Can upload electorate with excel')
         ]
     
     def __str__(self):
