@@ -1,0 +1,69 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Electorates {% endblock %}
+
+{% block header %} Electorates {% endblock %}
+
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Electorates</h4>
+            <p class="card-description">
+                All electorates
+            </p>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Index number</th>
+                            <th>Class</th>
+                            <th>Polling station</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        {% for data in electorates %}
+                        <tr id="electorate{{data.id}}">
+                            <td>{{forloop.counter}}</td>
+                            <td>{{data.full_name}}</td>
+                            <td>{{data.index_number}}</td>
+                            <td>{{data.class}}</td>
+                            <td>{{data.polling_station}}</td>
+                            <td>
+                                <input type="hidden" value="{{data.id}}">
+                                {% csrf_token %}
+
+                                {% if perms.root_app.delete_electorate %}
+                                    <button class="btn btn-rounded btn-icon btn-danger delete-hall"><i class="mdi mdi-delete"></i></button>
+                                {% endif %}
+
+                                {% if perms.root_app.change_electorate %}
+                                    <a href="{% url 'root_app:edit_electorate' data.id %}" class="btn btn-rounded btn-primary"><i class="mdi mdi-pencil"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/delete-hall.js' %}"></script>
+{% endblock %}
+

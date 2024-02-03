@@ -1,0 +1,67 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Groups {% endblock %}
+
+{% block header %} Groups {% endblock %}
+
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Groups</h4>
+            <p class="card-description">
+                All system groups
+            </p>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Group</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        {% for data in groups %}
+                        <tr id="group{{data.id}}">
+                            <td>{{forloop.counter}}</td>
+                            <td>{{data.name}}</td>
+                            <td>
+                                <input type="hidden" value="{{data.id}}">
+                                {% csrf_token %}
+
+                                {% if perms.auth.delete_group %}
+                                <button class="btn btn-rounded btn-icon btn-danger delete-group"><i class="mdi mdi-delete"></i></button>
+                                {% endif %}
+
+                                {% if perms.auth.add_permission or perms.auth.change_permission %}
+                                <a href="{% url 'root_app:group_permissions' data.id %}" class="btn btn-rounded btn-success" title="permissions"><i class="mdi mdi-lock text-center"></i></a>
+                                {% endif %}
+
+                                {% if perms.auth.change_group %}
+                                <a href="{% url 'root_app:group' data.id %}" class="btn btn-rounded btn-primary"><i class="mdi mdi-pencil"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/delete-group.js' %}"></script>
+{% endblock %}
+

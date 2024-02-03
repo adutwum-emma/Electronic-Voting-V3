@@ -1,0 +1,45 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Group {% endblock %}
+
+{% block header %} Group {% endblock %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Group Settings</h4>
+                <p class="card-description">Add or Edit Group here</p>
+
+                {% if is_update == True %}
+                <form action="{% url 'root_app:group' group.id %}" id="group">
+                {% else %}
+                <form action="{% url 'root_app:group' %}" id="group">
+                {% endif %}
+
+                {% csrf_token %}
+                
+                {% if is_update %}
+                    <input type="hidden" value="true" name="is_update">
+                {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <input type="text" value="{{group.name}}" id="group" name="group" class="form-control" placeholder="Group">
+                        </div>
+
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-sm btn-primary" id="save-group">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/group.js' %}"></script>
+{% endblock %}

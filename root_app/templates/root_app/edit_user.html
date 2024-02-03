@@ -1,0 +1,78 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Edit User {% endblock %}
+
+{% block header %} Edit User {% endblock %}
+
+
+{% block content %}
+
+<div class="content-wrapper">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Edit User</h5>
+            <p class="card-description">Editing a user</p>
+
+            <hr class="mb-3">
+            <form action="{% url 'root_app:edit_user' user.id %}" id="edit-user">
+
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <input type="text" value="{{user.username}}" name="username" id="username" placeholder="Username" class="form-control">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <input type="email" value="{{user.email}}" inputmode="email" name="email" id="email" placeholder="Email" class="form-control">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <input type="text" value="{{user.first_name}}" name="first_name" id="first_name" placeholder="First name" class="form-control">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <input type="text" value="{{user.last_name}}" name="last_name" id="last_name" placeholder="Last name" class="form-control">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <input type="text" value="{{user.other_name}}" name="other_name" id="other_name" placeholder="Other name" class="form-control">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <input type="number" value="{{user.phone_number}}" inputmode="numeric" name="phone_number" id="phone_number" placeholder="Phone number" class="form-control">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <select name="user_type" id="user_type" class="form-control">
+                            <option value="">User type</option>
+                            {% if user.user_type == 'superuser' %}
+                                <option value="superuser" selected>SUPERUSER</option>
+                                <option value="staff">STAFF</option>
+                            {% elif user.user_type == 'staff' %}
+                                <option value="superuser">SUPERUSER</option>
+                                <option value="staff" selected>STAFF</option>
+                            {% else %}
+                                <option value="superuser">SUPERUSER</option>
+                                <option value="staff">STAFF</option>
+                            {% endif %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary" id="save-button">SAVE CHANGES</button>
+                    </div>
+                </div>
+        
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/edit_user.js' %}"></script>
+{% endblock %}

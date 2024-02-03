@@ -1,0 +1,67 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Classes {% endblock %}
+
+{% block header %} Classes {% endblock %}
+
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Classes</h4>
+            <p class="card-description">
+                All classes available
+            </p>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Class</th>
+                            <th>Programme</th>
+                            <th>Year</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        {% for data in classes %}
+                        <tr id="class{{data.id}}">
+                            <td>{{forloop.counter}}</td>
+                            <td>{{data.class_name}}</td>
+                            <td>{{data.programme.programme_name}}</td>
+                            <td>{{data.year}}</td>
+                            <td>
+                                <input type="hidden" value="{{data.id}}">
+                                {% csrf_token %}
+
+                                {% if perms.root_app.delete_yearclass %}
+                                <button class="btn btn-rounded btn-icon btn-danger delete-class"><i class="mdi mdi-delete"></i></button>
+                                {% endif %}
+
+                                {% if perms.root_app.change_yearclass %}
+                                    <a href="{% url 'root_app:year_class' data.id %}" class="btn btn-rounded btn-primary"><i class="mdi mdi-pencil"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/delete-class.js' %}"></script>
+{% endblock %}
+

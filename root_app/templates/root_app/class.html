@@ -1,0 +1,68 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Class {% endblock %}
+
+{% block header %} Class {% endblock %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-body">
+
+                <h5 class="card-title">New Class</h5>
+
+                {% if is_update %}
+                    <form action="{% url 'root_app:year_class' class.id %}" id="class-form">
+                {% else %}
+                    <form action="{% url 'root_app:year_class' %}" id="class-form">
+                {% endif %}
+
+                    {% csrf_token %}
+                    
+                    {% if is_update %}
+                        <input type="hidden" value="true" id="is_update">
+                    {% endif %}
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <input type="text" value="{{class.class_name}}" placeholder="Class name" name="class_name" id="class_name" class="form-control">
+                        </div>
+                    </div>
+        
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <select name="programme_id" id="programme_id" class="form-control">
+                                <option value="">Choose Programme</option>
+                                {% for data in programmes %}
+                                    {% if data.id == class.programme.id %}
+                                        <option value="{{data.id}}" selected>{{data.programme_name}}</option>
+                                    {% else %}
+                                        <option value="{{data.id}}">{{data.programme_name}}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+        
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <input type="number" value="{{class.year}}" placeholder="Year" name="year" id="year" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary" id="save-class">SAVE</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/class.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Edit Electorate {% endblock %}
+
+{% block header %} Edit Electorate {% endblock %}
+
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Edit Electorate</h5>
+            <p class="card-description">Edit electorate details using this form</p>
+
+            <form action="{% url 'root_app:edit_electorate' electorate.id %}" id="edit-electorate-form">
+
+                {% csrf_token %}
+
+                <div class="form-group row">
+                    <label for="index_number" class="col-sm-2 col-form-label">Index Number</label>
+
+                    <input type="text" value="{{electorate.username}}" name="index_number" id="index_number" placeholder="Index number" class="col-sm-5 form-control">
+                </div>
+
+                <div class="form-group row">
+                    <label for="email" class="col-sm-2 col-form-label">Email</label>
+
+                    <input type="email" value="{{electorate.email}}" name="email" inputmode="email" id="email" placeholder="Email" class="col-sm-5 form-control">
+                </div>
+
+                <div class="form-group row">
+                    <label for="first_name" class="col-sm-2 col-form-label">First name</label>
+
+                    <input type="text" value="{{electorate.first_name}}" name="first_name" id="first_name" placeholder="First name" class="col-sm-5 form-control">
+                </div>
+
+                <div class="form-group row">
+                    <label for="last_name" class="col-sm-2 col-form-label">Last name</label>
+
+                    <input type="text" value="{{electorate.last_name}}" name="last_name" id="last_name" placeholder="Last name" class="col-sm-5 form-control">
+                </div>
+
+                <div class="form-group row">
+                    <label for="othername" class="col-sm-2 col-form-label">Other name</label>
+
+                    <input type="text" value="{{electorate.othername}}" name="othername" id="othername" placeholder="Other name" class="col-sm-5 form-control">
+                </div>
+
+                <div class="form-group row">
+                    <label for="phone" class="col-sm-2 col-form-label">Phone number</label>
+
+                    <input type="number" value="{{electorate.phone_number}}" inputmode="tel" pattern="{0-9}[10]" name="phone" id="phone" placeholder="Phone number" class="col-sm-5 form-control">
+                </div>
+
+                <div class="form-group row">
+                    <label for="programme" class="col-sm-2 col-form-label">Programme</label>
+
+                    <select name="programme" id="programme" class="col-sm-5 form-control">
+                        <option value="">Choose programme</option>
+                        {% for data in programmes %}
+                            {% if electorate.electorateprofile.year_class.programme.id == data.id %}
+                            <option value="{{data.id}}" selected>{{data.programme_name}}</option>
+                            {% else %}
+                            <option value="{{data.id}}">{{data.programme_name}}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+
+                </div>
+
+                <div class="form-group row">
+                    <label for="year_class" class="col-sm-2 col-form-label">Class</label>
+
+                    <select name="class" id="year_class" class="col-sm-5 form-control">
+                        <option value="">Choose Class</option>
+                        {% for data in electorate.electorateprofile.year_class.programme.yearclass_set.all %}
+                            {% if data.id == electorate.electorateprofile.year_class.id %}
+                                <option value="{{data.id}}" selected>{{data.class_name}}</option>
+                            {% else %} 
+                                <option value="{{data.id}}">{{data.class_name}}</option> 
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+
+                </div>
+
+                <div class="form-group row">
+                    <label for="hall" class="col-sm-2 col-form-label">Hall</label>
+
+                    <select name="hall" id="hall" class="col-sm-5 form-control">
+                        <option value="">Choose hall</option>
+                        {% for data in halls %}
+                            {% if data.id == electorate.electorateprofile.hall.id %}
+                                <option value="{{data.id}}" selected>{{data.hall_name}}</option>
+                            {% else %}
+                                <option value="{{data.id}}">{{data.hall_name}}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+
+                </div>
+
+                <div class="form-group row">
+                    <label for="polling_station" class="col-sm-2 col-form-label">Polling station</label>
+
+                    <select name="polling_station" id="polling_station" class="col-sm-5 form-control">
+                        <option value="">Choose polling station</option>
+
+                        {% for data in polling_stations %}
+                            {% if data.id == electorate.electorateprofile.polling_station.id %}
+                                <option value="{{data.id}}" selected>{{data.name}}</option>
+                            {% else %}
+                                <option value="{{data.id}}">{{data.name}}</option>
+                            {% endif %}
+                        {% endfor %}
+                        
+                    </select>
+
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        <button class="btn btn-primary" id="save-electorate-but">SAVE</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/edit-electorate.js' %}"></script>
+    <script src="{% static 'root_app/scripts/get-class.js' %}"></script>
+{% endblock %}

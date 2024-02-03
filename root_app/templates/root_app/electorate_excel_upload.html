@@ -1,0 +1,83 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Electorate Excel Upload {% endblock %}
+
+{% block header %} Electorate Excel Upload {% endblock %}
+
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Add new electorates</h5>
+            <p class="card-description">Use this form to upload bulk electorates</p>
+
+            <form action="">
+
+                {% csrf_token %}
+
+                <div class="row form-group">
+                    <label for="programme" class="col-sm-2 col-form-label">Programme</label>
+                    <select name="programme" id="programme" class="form-control col-sm-5">
+                        <option value="">Programme</option>
+                        {% for data in programmes %}
+                            <option value="{{data.id}}">{{data.programme_name}}</option> 
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="row form-group">
+                    <label for="year_class" class="col-sm-2 col-form-label">Class</label>
+                    <select name="year_class" id="year_class" class="form-control col-sm-5">
+                        <option value="">Choose Class</option>
+                    </select>
+                </div>
+
+                <div class="row form-group">
+                    <label for="hall" class="col-sm-2 col-form-label">Hall</label>
+                    <select name="hall" id="hall" class="form-control col-sm-5">
+                        <option value="">Choose Hall</option>
+
+                        {% for data in halls %}
+                            <option value="">{{data.hall_name}}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div class="row form-group">
+                    <label for="polling_station" class="col-sm-2 col-form-label">Polling station</label>
+                    <select name="polling_station" id="polling_station" class="form-control col-sm-5">
+                        <option value="">Polling station</option>
+                        {% for data in polling_stations %}
+                            <option value="{{data.id}}">{{data.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="row form-group">
+                    <label for="excel_file" class="col-sm-2 col-form-label">Excel file</label>
+                    <input type="file" name="excel_file" id="excel_file" accept=".xlsx" class="col-sm-5 form-control">
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-sm-5">
+                        <button class="btn btn-primary" type="submit">SAVE</button>
+                    </div>
+                </div>
+        
+            </form>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'root_app/scripts/get-class.js' %}"></script>
+{% endblock %}

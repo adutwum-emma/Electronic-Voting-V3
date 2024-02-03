@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  {% load static %}
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>{% block title %}  {% endblock %}</title>
+  <!-- base:css -->
+  <link rel="stylesheet" href="{% static 'root_app/vendors/typicons/typicons.css' %}">
+  <link rel="stylesheet" href="{% static 'root_app/vendors/css/vendor.bundle.base.css' %}">
+  <link rel="stylesheet" href="{% static 'root_app/vendors/mdi/css/materialdesignicons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'root_app/vendors/mdi/fonts/materialdesigniconswebfont.svg' %}">
+
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="{% static 'root_app/css/vertical-layout-light/style.css' %}">
+
+
+
+  <!-- endinject -->
+  <link rel="shortcut icon" href="{% static 'root_app/images/favicon.png' %}" />
+
+  <link rel="stylesheet" href="{% static 'root_app/alert_toaster_css/sweetalert/sweetalert.css' %}">
+  <link rel="stylesheet" href="{% static 'root_app/alert_toaster_css/toastr/toastr.min.css' %}">
+
+  <link href="{% static 'root_app/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'root_app/vendors/select2/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'root_app/vendors/select2-bootstrap-theme/select2-bootstrap.min.css' %}">
+
+
+
+</head>
+<body>
+  <div class="row" id="proBanner">
+    <div class="col-12">
+    </div>
+  </div>
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="navbar-brand-wrapper d-flex justify-content-center">
+        <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
+          <a class="navbar-brand brand-logo text-white" href=""><h4><strong>KNMTC</strong></h4></a>
+          <a class="navbar-brand brand-logo-mini text-white" href=""><h4><strong>KNMTC</strong></h4></a>
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+            <span class="typcn typcn-th-menu"></span>
+          </button>
+        </div>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <ul class="navbar-nav mr-lg-2">
+          <li class="nav-item nav-profile dropdown">
+            <a class="nav-link" href="#" data-toggle="dropdown" id="profileDropdown">
+              <img src="{% static 'root_app/images/faces/face5.jpg' %}" alt="profile"/>
+              <span class="nav-profile-name">{{user.full_name}}</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+              <a class="dropdown-item">
+                <i class="typcn typcn-cog-outline text-primary"></i>
+                Settings
+              </a>
+              <a class="dropdown-item" href="{% url 'authentication_app:logout' %}">
+                <i class="typcn typcn-eject text-primary"></i>
+                Logout
+              </a>
+            </div>
+          </li>
+          <li class="nav-item nav-user-status dropdown">
+              <p class="mb-0">Last login was {{user.last_login}}.</p>
+          </li>
+        </ul>
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item nav-date dropdown">
+            <a class="nav-link d-flex justify-content-center align-items-center" href="javascript:;">
+              <h6 class="date mb-0">Today : {{today}}</h6>
+              <i class="typcn typcn-calendar"></i>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-toggle="dropdown">
+              <i class="typcn typcn-cog-outline mx-0"></i>
+              <span class="count"></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+              <p class="mb-0 font-weight-normal float-left dropdown-header">Messages</p>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                    <img src="images/faces/face4.jpg" alt="image" class="profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow">
+                  <h6 class="preview-subject ellipsis font-weight-normal">David Grey
+                  </h6>
+                  <p class="font-weight-light small-text text-muted mb-0">
+                    The meeting is cancelled
+                  </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                    <img src="images/faces/face2.jpg" alt="image" class="profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow">
+                  <h6 class="preview-subject ellipsis font-weight-normal">Tim Cook
+                  </h6>
+                  <p class="font-weight-light small-text text-muted mb-0">
+                    New product launch
+                  </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                    <img src="images/faces/face3.jpg" alt="image" class="profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow">
+                  <h6 class="preview-subject ellipsis font-weight-normal"> Johnson
+                  </h6>
+                  <p class="font-weight-light small-text text-muted mb-0">
+                    Upcoming board meeting
+                  </p>
+                </div>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item dropdown mr-0">
+            <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center" id="notificationDropdown" href="#" data-toggle="dropdown">
+              <i class="typcn typcn-bell mx-0"></i>
+              <span class="count"></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+              <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <div class="preview-icon bg-success">
+                    <i class="typcn typcn-info mx-0"></i>
+                  </div>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject font-weight-normal">Application Error</h6>
+                  <p class="font-weight-light small-text mb-0 text-muted">
+                    Just now
+                  </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <div class="preview-icon bg-warning">
+                    <i class="typcn typcn-cog-outline mx-0"></i>
+                  </div>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject font-weight-normal">Settings</h6>
+                  <p class="font-weight-light small-text mb-0 text-muted">
+                    Private message
+                  </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <div class="preview-icon bg-info">
+                    <i class="typcn typcn-user mx-0"></i> 
+                  </div>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject font-weight-normal">New user registration</h6>
+                  <p class="font-weight-light small-text mb-0 text-muted">
+                    2 days ago
+                  </p>
+                </div>
+              </a>
+            </div>
+          </li>
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+          <span class="typcn typcn-th-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <nav class="navbar-breadcrumb col-xl-12 col-12 d-flex flex-row p-0">
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <ul class="navbar-nav navbar-nav-left mr-lg-2">
+          <li class="nav-item ml-0">
+            <h4 class="mb-0">{% block header %} {% endblock %}</h4>
+          </li>
+        </ul>
+        <ul class="navbar-nav navbar-nav-right">
+          
+        </ul>
+      </div>
+    </nav>
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial -->
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'root_app:dashboard' %}">
+              <i class="typcn typcn-device-desktop menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+
+          {% if perms.auth.add_group or perms.auth.view_group %}
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#perm" aria-expanded="false" aria-controls="ui-basic">
+              <i class="typcn typcn-user menu-icon"></i>
+              <span class="menu-title">Group</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="perm">
+              <ul class="nav flex-column sub-menu">
+
+                {% if perms.auth.add_group %}
+                <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:group' %}">Add Group</a></li>
+                {% endif %}
+
+                {% if perms.auth.view_group %}
+                <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:groups' %}">Groups</a></li>
+                {% endif %}
+              </ul>
+            </div>
+          </li>
+          {% endif %}
+
+          {% if perms.authentication_app.add_user or perms.authentication_app.view_users %}
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+              <i class="typcn typcn-user menu-icon"></i>
+              <span class="menu-title">System Users</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-basic">
+              <ul class="nav flex-column sub-menu">
+
+                {% if perms.authentication_app.add_user %}
+                <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:add_user' %}">Add User</a></li>
+                {% endif %}
+
+                {% if perms.authentication_app.view_users %}
+                <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:users' %}">Users</a></li>
+                {% endif %}
+
+              </ul>
+            </div>
+          </li>
+          {% endif %}
+
+          {% if perms.root_app.add_programme or perms.root_app.view_programme %}
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
+              <i class="typcn typcn-mortar-board menu-icon"></i>
+              <span class="menu-title">Programmes</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="form-elements">
+              <ul class="nav flex-column sub-menu">
+
+                {% if perms.root_app.add_programme %}
+                  <li class="nav-item"><a class="nav-link" href="{% url 'root_app:programme' %}">Add Programme</a></li>
+                {% endif %}
+
+                {% if perms.root_app.view_programme %}
+                  <li class="nav-item"><a class="nav-link" href="{% url 'root_app:programmes' %}">Programmes</a></li>
+                {% endif %}
+
+              </ul>
+            </div>
+          </li>
+          {% endif %}
+
+          {% if perms.root_app.add_yearclass or perms.root_app.view_yearclass %}
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#class" aria-expanded="false" aria-controls="charts">
+              <i class="typcn typcn-book menu-icon"></i>
+              <span class="menu-title">Manage Class</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="class">
+              <ul class="nav flex-column sub-menu">
+
+                {% if perms.root_app.add_yearclass %}
+                  <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:year_class' %}">Add Class</a></li>
+                {% endif %}
+
+                {% if perms.root_app.view_yearclass %}
+                  <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:classes' %}">Classes</a></li>
+                {% endif %}
+
+              </ul>
+            </div>
+          </li>
+          {% endif %}
+
+          {% if perms.root_app.add_hall or perms.root_app.view_hall %}
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#hall-nav" aria-expanded="false" aria-controls="tables">
+              <i class="mdi mdi-lightbulb menu-icon"></i>
+              <span class="menu-title">Halls</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="hall-nav">
+              <ul class="nav flex-column sub-menu">
+                {% if perms.root_app.add_hall %}
+                  <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:hall' %}">Add Hall</a></li>
+                {% endif %}
+
+                {% if perms.root_app.view_hall %}
+                  <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:halls' %}">Halls </a></li>
+                {% endif %}
+              </ul>
+            </div>
+          </li>
+          {% endif %}
+
+          {% if perms.root_app.add_pollingstation or perms.root_app.view_pollingstation %}
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#station" aria-expanded="false" aria-controls="icons">
+              <i class="mdi mdi-poll-box menu-icon"></i>
+              <span class="menu-title">Polling Station</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="station">
+              <ul class="nav flex-column sub-menu">
+                {% if perms.root_app.add_pollingstation %}
+                <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:polling_station' %}">Add Station</a></li>
+                {% endif %}
+
+                {% if perms.root_app.view_pollingstation %}
+                <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:polling_stations' %}">All Stations</a></li>
+                {% endif %}
+              </ul>
+            </div>
+          </li>
+          {% endif %}
+
+
+          {% if perms.root_app.add_election or perms.root.view_election %}
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#error" aria-expanded="false" aria-controls="error">
+              <i class="mdi mdi-poll menu-icon"></i>
+              <span class="menu-title">Elections</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="error">
+              <ul class="nav flex-column sub-menu">
+
+                {% if perms.root_app.add_election %}
+                  <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:election' %}"> Add Election </a></li>
+                {% endif %}
+
+                {% if perms.root_app.view_election %}
+                <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:elections' %}"> Elections </a></li>
+                {% endif %}
+                
+              </ul>
+            </div>
+          </li>
+          {% endif %}
+
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#positions" aria-expanded="false" aria-controls="error">
+              <i class="mdi mdi-checkbox-marked-circle menu-icon"></i>
+              <span class="menu-title">Asp. Positions</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="positions">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> Add Position </a></li>
+                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> Positions </a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#aspirants" aria-expanded="false" aria-controls="error">
+              <i class="mdi mdi-account-plus menu-icon"></i>
+              <span class="menu-title">Aspirants</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="aspirants">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> Add Aspirant </a></li>
+                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> Aspirants </a></li>
+              </ul>
+            </div>
+          </li>
+
+          {% if perms.root_app.add_electorate or perms.root_app.view_electorate %}
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+              <i class="mdi mdi-account-multiple menu-icon"></i>
+              <span class="menu-title">Electorates</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="auth">
+              <ul class="nav flex-column sub-menu">
+
+                {% if perms.root_app.add_electorate %}
+                <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:add_electorate' %}"> Add Electorates </a></li>
+                {% endif %}
+
+                <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:electorate_excelupload' %}"> Excel Upload </a></li>
+
+                {% if perms.root_app.view_electorate %}
+                <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:electorates' %}"> Electorates </a></li>
+                {% endif %}
+
+              </ul>
+            </div>
+          </li>
+          {% endif %}
+
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#report" aria-expanded="false" aria-controls="error">
+              <i class="mdi mdi-chart-arc menu-icon"></i>
+              <span class="menu-title">Report</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="report">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> View Results </a></li>
+                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> Detailed Report </a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="main-panel">
+        {% block content %}
+
+        {% endblock %}
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+        <footer class="footer">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-sm-flex justify-content-center justify-content-sm-between">
+                        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © <script>document.write(new Date().getFullYear())</script>. All rights reserved.</span>
+                        <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center text-muted"> <a href="https://www.bootstrapdash.com/" class="text-muted" target="https://toskybrown.pythonanyhwere.com">toskybrown Technologies</a> (toskybrown.pythonanywhere.com) </span>
+                    </div>
+                </div>    
+            </div>        
+        </footer>
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+
+  <script src="{% static 'root_app/jquery-3.7.1.min.js' %}"></script>
+
+
+  <!-- base:js -->
+  <script src="{% static 'root_app/vendors/js/vendor.bundle.base.js' %}"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page-->
+  <script src="{% static 'root_app/vendors/chart.js/Chart.min.js' %}"></script>
+  <!-- End plugin js for this page-->
+  <!-- inject:js -->
+  <script src="{% static 'root_app/js/off-canvas.js' %}"></script>
+  <script src="{% static 'root_app/js/hoverable-collapse.js' %}"></script>
+  <script src="{% static 'root_app/js/template.js' %}"></script>
+  <script src="{% static 'root_app/js/settings.js' %}"></script>
+  <script src="{% static 'root_app/js/todolist.js' %}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="{% static 'root_app/js/dashboard.js' %}"></script>
+  <!-- End custom js for this page-->
+
+  <script src="{% static 'root_app/alert_toaster_js/toastr/toastr.min.js' %}"></script>
+  <script src="{% static 'root_app/alert_toaster_js/sweetalert/sweetalert.min.js' %}"></script>
+
+  <!-- Page level plugins -->
+  <script src="{% static 'root_app/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'root_app/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="{% static 'root_app/scripts/datatables-demo.js' %}"></script>
+
+  <script src="{% static 'root_app/vendors/select2/select2.min.js' %}"></script>
+  <script src="{% static 'root_app/js/select2.js' %}"></script>
+
+  
+
+
+  {% block scripts %}
+
+
+  {% endblock %}
+
+</body>
+
+</html>
+

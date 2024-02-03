@@ -1,0 +1,151 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Edit Election {% endblock %}
+
+{% block header %} Edit Elecftion {% endblock %}
+
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="card">
+    
+        <div class="card-body">
+
+            <h5 class="card-title">Edit Election</h5>
+            
+            <form action="{% url 'root_app:edit_election' election.id %}" id="edit-election-form">
+
+                {% csrf_token %}
+
+                    <div class="form-group row">
+                        <label for="election_name" class="col-sm-3 col-form-label">Election name</label>
+                        <input type="text" name="election_name" value="{{election.election_name}}" id="election_name" class="form-control col-sm-9" placeholder="Election name">
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="election_year" class="col-sm-3 col-form-label">Election year</label>
+                        <input type="number" name="election_year" value="{{election.election_year}}" id="election_year" class="col-sm-9 form-control" placeholder="Election year">
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="election_date" class="col-sm-3 col-form-label">Election date</label>
+                        <input type="date" name="election_date" id="election_date" value="{{election.election_date|date:'Y-m-d'}}" class="form-control col-sm-5" placeholder="Election date">
+
+                        <input type="time" name="election_time" id="election_time" value="{{election.election_time|time:'H:i:s'}}" class="form-control col-sm-4" placeholder="Election time">
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="ending_date" class="col-sm-3 col-form-label">Ending date</label>
+                        <input type="date" name="ending_date" id="ending_date" value="{{election.ending_date|date:'Y-m-d'}}" class="form-control col-sm-5" placeholder="Election date">
+
+                        <input type="time" name="ending_time" id="ending_time" value="{{election.ending_time|date:'H:i:s'}}" class="form-control col-sm-4" placeholder="Ending time">
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Allow Multiple Votes</label>
+                        <div class="row col-sm-9">
+                            {% if election.allow_multiple_votes %}
+                            <div class="form-check col-sm-2">
+                                <label class="form-check-label">
+                                  <input type="radio" class="form-check-input" name="mul_votes" id="mul_votes" value="1" checked>
+                                  Yes
+                                </label>
+                            </div>
+
+                            <div class="form-check col-sm-2">
+                                <label class="form-check-label">
+                                  <input type="radio" class="form-check-input" name="mul_votes" id="mul_votes" value="0">
+                                  No
+                                </label>
+                            </div>
+                            {% else %}
+
+                            <div class="form-check col-sm-2">
+                                <label class="form-check-label">
+                                  <input type="radio" class="form-check-input" name="mul_votes" id="mul_votes" value="1">
+                                  Yes
+                                </label>
+                            </div>
+
+                            <div class="form-check col-sm-2">
+                                <label class="form-check-label">
+                                  <input type="radio" class="form-check-input" name="mul_votes" id="mul_votes" value="0" checked>
+                                  No
+                                </label>
+                            </div>
+
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Election status</label>
+                        <div class="form-check col-sm-9">
+                            {% if election.is_active %}
+                                <label id="status" class="form-check-label">
+                                    <input type="checkbox" name="status" id="status" class="form-check-input" checked>
+                                    Active
+                                </label>
+                            {% else %}
+                                <label id="status" class="form-check-label">
+                                    <input type="checkbox" name="status" id="status" class="form-check-input">
+                                    Active
+                                </label>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if perms.root_app.can_assign_commnissioner_role %}
+
+                    <div class="form-group row">
+                        <label for="electoral_commissioner" class="col-sm-3 col-form-label">Electoral Commissioner</label>
+                        <select name="electoral_commissioner" id="electoral_commissioner" class="form-control col-sm-9">
+                            <option value="">Choose a Commissioner</option>
+                            {% for data in users %}
+                                {% if data.id == election.electoralcommissioner.user.id %}
+                                    <option value="{{data.id}}" selected>{{data.full_name}} | {{data.username}}</option>
+                                {% else %}
+                                    <option value="{{data.id}}">{{data.full_name}} | {{data.username}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {% endif %}
+
+
+                    <div class="form-group row">
+                        <label for="polling_stations" class="col-sm-3 col-form-label">Allowed Stations</label>
+                        <select class="form-control col-sm-9" name="polling_stations" multiple="multiple">
+                            {% for data in polling_stations %}
+                                {% if data.exist %}
+                                    <option value="{{data.id}}" selected>{{data.name}}</option>
+                                {% else %}
+                                    <option value="{{data.id}}">{{data.name}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-dm-3">
+                            <button class="btn btn-primary" id="edit-election-but" type="submit">SAVE</button>
+                        </div>
+                    </div>
+        
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/edit-election.js' %}"></script>
+{% endblock %}

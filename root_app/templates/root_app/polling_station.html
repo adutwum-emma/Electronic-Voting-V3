@@ -1,0 +1,52 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Polling Station {% endblock %}
+
+{% block header %} Polling Station {% endblock %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Polling Station</h4>
+
+                {% if is_update == True %}
+                    <form action="{% url 'root_app:polling_station' polling_station.id %}" id="poll_station">
+                {% else %}
+                    <form action="{% url 'root_app:polling_station' %}" id="poll_station">
+                {% endif %}
+
+                {% csrf_token %}
+                
+                {% if is_update == True %}
+                    <input type="hidden" value="true" id="is_update">
+                {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <input type="text" value="{{polling_station.name}}" name="name" class="form-control" placeholder="Station name">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <input type="text" value="{{polling_station.location}}" name="location" class="form-control" placeholder="Location">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-sm btn-primary" id="save-station">SAVE</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/polling_station.js' %}"></script>
+{% endblock %}

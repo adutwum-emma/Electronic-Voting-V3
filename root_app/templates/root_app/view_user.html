@@ -1,0 +1,97 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} View User {% endblock %}
+
+{% block header %} View User {% endblock %}
+
+{% block content %}
+
+<div class="content-wrapper">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">User Details</h4>
+            <p class="card-description">
+                Details for the selected user
+            </p>
+            <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <th>Username</th>
+                        <td>{{data.username}}</td>
+                    </tr>
+    
+                    <tr>
+                        <th>Email</th>
+                        <td>{{data.email}}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Email</th>
+                        <td>{{data.phone_number}}</td>
+                    </tr>
+    
+                    <tr>
+                        <th>First name</th>
+                        <td>{{data.first_name}}</td>
+                    </tr>
+    
+                    <tr>
+                        <th>Last name</th>
+                        <td>{{data.last_name}}</td>
+                    </tr>
+    
+                    <tr>
+                        <th>Other name(s)</th>
+                        <td>{{data.other_name}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            {% if perms.authentication_app.change_user %}
+                <a href="{% url 'root_app:edit_user' data.id %}" class="btn btn-sm btn-rounded btn-primary"><i class="mdi mdi-pencil"></i> Edit</a>
+            {% endif %}
+
+        </div>
+    </div>
+
+    {% if perms.authentication_app.assign_group %}
+
+    <div class="card mt-3">
+        <div class="card-body">
+            <h4 class="card-title">Groups</h4>
+            <p class="card-description">Groups user belong to</p>
+
+            <form action="{% url 'root_app:view_user' data.id %}" id="add-group-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Select Groups</label>
+                    <select class="js-example-basic-multiple w-100 form-control" name="groups" multiple="multiple">
+                      {% for ele in groups %}
+                
+                        <option value="{{ele.id}}">{{ele.name}}</option>
+
+                      {% endfor %}
+
+                        {% for data in seleted_groups %}
+                                <option value="{{data.id}}" selected>{{data.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-sm btn-primary" id="save-user-perm">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/user-permission.js' %}"></script>
+{% endblock %}

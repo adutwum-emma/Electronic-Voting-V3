@@ -1,0 +1,53 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Programme {% endblock %}
+
+{% block header %} Programme {% endblock %}
+
+
+{% block content %}
+
+<div class="content-wrapper">
+    <div class="card">
+        <div class="card-body">
+
+            <h5 class="card-title">Add Programme</h5>
+
+            <p class="card-description">
+                Add a new programme using this form
+            </p>
+
+            {% if is_update %}
+            <form action="{% url 'root_app:programme' programme.id %}" id="programme-form">
+            {% else %}
+            <form action="{% url 'root_app:programme' %}" id="programme-form">
+            {% endif %}
+
+            {% csrf_token %}
+
+                {% if is_update %}
+                    <input type="hidden" value="true" id="is_update">
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" value="{{programme.programme_name}}" name="programme_name" id="programme_name" class="form-control" placeholder="Programme">
+                    </div>
+
+                    <div class="col-md-12 mt-3">
+                        <button type="submit" class="btn btn-primary" id="save-prgramme">SAVE</button>
+                    </div>
+                </div>
+            
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/programme.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} New Electorate {% endblock %}
+
+{% block header %} New Electorate {% endblock %}
+
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Add New Electorate</h5>
+            <p class="card-description">Add new electorate using this form</p>
+
+            <form action="{% url 'root_app:add_electorate' %}" id="new-electorate-form">
+
+                {% csrf_token %}
+
+                <div class="form-group row">
+                    <label for="index_number" class="col-sm-2 col-form-label">Index Number</label>
+
+                    <input type="text" name="index_number" id="index_number" placeholder="Index number" class="col-sm-5 form-control">
+                </div>
+
+                <div class="form-group row">
+                    <label for="email" class="col-sm-2 col-form-label">Email</label>
+
+                    <input type="email" name="email" inputmode="email" id="email" placeholder="Email" class="col-sm-5 form-control">
+                </div>
+
+                <div class="form-group row">
+                    <label for="first_name" class="col-sm-2 col-form-label">First name</label>
+
+                    <input type="text" name="first_name" id="first_name" placeholder="First name" class="col-sm-5 form-control">
+                </div>
+
+                <div class="form-group row">
+                    <label for="last_name" class="col-sm-2 col-form-label">Last name</label>
+
+                    <input type="text" name="last_name" id="last_name" placeholder="Last name" class="col-sm-5 form-control">
+                </div>
+
+                <div class="form-group row">
+                    <label for="othername" class="col-sm-2 col-form-label">Other name</label>
+
+                    <input type="text" name="othername" id="othername" placeholder="Other name" class="col-sm-5 form-control">
+                </div>
+
+                <div class="form-group row">
+                    <label for="phone" class="col-sm-2 col-form-label">Phone number</label>
+
+                    <input type="number" inputmode="tel" pattern="{0-9}[10]" name="phone" id="phone" placeholder="Phone number" class="col-sm-5 form-control">
+                </div>
+
+                <div class="form-group row">
+                    <label for="programme" class="col-sm-2 col-form-label">Programme</label>
+
+                    <select name="programme" id="programme" class="col-sm-5 form-control">
+                        <option value="">Choose programme</option>
+                        {% for data in programmes %}
+                            <option value="{{data.id}}">{{data.programme_name}}</option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+
+                <div class="form-group row">
+                    <label for="year_class" class="col-sm-2 col-form-label">Class</label>
+
+                    <select name="class" id="year_class" class="col-sm-5 form-control">
+                        <option value="">Choose Class</option>
+                    </select>
+
+                </div>
+
+                <div class="form-group row">
+                    <label for="hall" class="col-sm-2 col-form-label">Hall</label>
+
+                    <select name="hall" id="hall" class="col-sm-5 form-control">
+                        <option value="">Choose hall</option>
+                        {% for data in halls %}
+                            <option value="{{data.id}}">{{data.hall_name}}</option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+
+                <div class="form-group row">
+                    <label for="polling_station" class="col-sm-2 col-form-label">Polling station</label>
+
+                    <select name="polling_station" id="polling_station" class="col-sm-5 form-control">
+                        <option value="">Choose polling station</option>
+
+                        {% for data in polling_stations %}
+                            <option value="{{data.id}}">{{data.name}}</option>
+                        {% endfor %}
+                        
+                    </select>
+
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        <button class="btn btn-primary" id="save-electorate-but">SAVE</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/new-electorate.js' %}"></script>
+    <script src="{% static 'root_app/scripts/get-class.js' %}"></script>
+{% endblock %}

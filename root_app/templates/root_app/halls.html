@@ -1,0 +1,63 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Halls {% endblock %}
+
+{% block header %} Halls {% endblock %}
+
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Halls</h4>
+            <p class="card-description">
+                All available halls
+            </p>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Hall</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        {% for data in halls %}
+                        <tr id="hall{{data.id}}">
+                            <td>{{forloop.counter}}</td>
+                            <td>{{data.hall_name}}</td>
+                            <td>
+                                <input type="hidden" value="{{data.id}}">
+                                {% csrf_token %}
+
+                                {% if perms.root_app.delete_hall %}
+                                    <button class="btn btn-rounded btn-icon btn-danger delete-hall"><i class="mdi mdi-delete"></i></button>
+                                {% endif %}
+
+                                {% if perms.root_app.change_hall %}
+                                    <a href="{% url 'root_app:hall' data.id %}" class="btn btn-rounded btn-primary"><i class="mdi mdi-pencil"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/delete-hall.js' %}"></script>
+{% endblock %}
+

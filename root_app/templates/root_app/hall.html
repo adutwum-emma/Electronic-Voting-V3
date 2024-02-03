@@ -1,0 +1,44 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Hall {% endblock %}
+
+{% block header %} Hall {% endblock %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Hall</h4>
+
+                {% if is_update == True %}
+                <form action="{% url 'root_app:hall' hall.id %}" id="hall">
+                {% else %}
+                <form action="{% url 'root_app:hall' %}" id="hall">
+                {% endif %}
+
+                {% csrf_token %}
+                
+                {% if is_update %}
+                    <input type="hidden" value="true" id="is_update">
+                {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <input type="text" value="{{hall.hall_name}}" name="hall_name" class="form-control" placeholder="Hall">
+                        </div>
+
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-sm btn-primary" id="save-hall">SAVE</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/hall.js' %}"></script>
+{% endblock %}
