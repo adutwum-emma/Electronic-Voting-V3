@@ -392,7 +392,7 @@
             </div>
           </li>
 
-          {% if perms.root_app.add_electorate or perms.root_app.view_electorate %}
+          {% if perms.root_app.add_electorate or perms.root_app.view_electorate or perms.root_app.upload_electorate_with_excel %}
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
               <i class="mdi mdi-account-multiple menu-icon"></i>
@@ -406,7 +406,9 @@
                 <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:add_electorate' %}"> Add Electorates </a></li>
                 {% endif %}
 
+                {% if perms.root_app.upload_electorate_with_excel %}
                 <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:electorate_excelupload' %}"> Excel Upload </a></li>
+                {% endif %}
 
                 {% if perms.root_app.view_electorate %}
                 <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:electorates' %}"> Electorates </a></li>

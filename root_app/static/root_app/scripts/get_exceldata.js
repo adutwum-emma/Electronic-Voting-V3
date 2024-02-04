@@ -63,6 +63,7 @@ $('#excel_file').change(function(){
 
         error: function(){
             $("#excel-loading-box").empty()
+            $("#excel-data-form").find('select, button').prop('disabled', false)
         }
     })
 

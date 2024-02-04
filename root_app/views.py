@@ -11,6 +11,7 @@ from root_app.models import (Programme, YearClass,
                              AllowedPollingStation, Programme,
                              Hall, PollingStation, ElectorateProfile)
 from openpyxl import load_workbook
+import json
 
 def is_superuser(user):
 
@@ -1369,7 +1370,11 @@ def electorate_excelupload(request):
 
     if request.method == 'POST':
 
-        excel_file = request.FILES['excel_file']
+        try:
+            excel_file = request.FILES['excel_file']
+        
+        except KeyError:
+            return JsonResponse({'code':400, 'message':'No file selected'})
 
         class_id = request.POST['year_class']
 
@@ -1377,16 +1382,14 @@ def electorate_excelupload(request):
 
         polling_station_id = request.POST['polling_station']
 
-        if excel_file == '':
-            return JsonResponse({'code':400, 'message':'Excel file is required'})
         
-        elif year_class == '':
+        if class_id == '':
             return JsonResponse({'code':400, 'message':'No class is selected'})
         
-        elif hall ==  '':
+        elif hall_id ==  '':
             return JsonResponse({'code':400, 'message':'No hall is selected'})
         
-        elif polling_station == '':
+        elif polling_station_id == '':
             return JsonResponse({'code':400, 'message':'No polling station is selected'})
         
         book = load_workbook(excel_file)
@@ -1395,7 +1398,7 @@ def electorate_excelupload(request):
 
         rows = sheet.rows
 
-        headers = [data.values for data in next(rows)]
+        headers = [data.value for data in next(rows)]
 
         all_data = []
 
@@ -1413,39 +1416,51 @@ def electorate_excelupload(request):
         for data in all_data:
 
             if data['index_number'] is None:
-                data.update(
-                    {'response':'Index number is required'}
-                )
+
+                data['response_message'] = 'Index number is required'
+                 
                 data_response.append(data)
 
             elif User.objects.filter(username=data['index_number']).exists():
-                data.update(
-                    {'response':'Index number already taken'}
-                )
+
+                data['response_message'] = 'Index number already taken'
+
                 data_response.append(data)
 
-            elif data['first-name'] is None:
-                data.update(
-                    {'response':'First name is required'}
-                )
+            elif data['first_name'] is None:
+
+                data['response_message'] = 'First name is required'
+
                 data_response.append(data)
          
             elif data['last_name'] is None:
-                data.update(
-                    {'response':'Last name is required'}
-                )
+
+                data['response_message'] = 'Last name is required'
+
                 data_response.append(data)
             
             elif data['email'] is None:
-                data.update(
-                    {'response':'Email is required'}
-                )
+
+                data['response_message'] = 'Email is required'
+
+                data_response.append(data)
+
+            elif User.objects.filter(phone_number=data['phone_number']).exists():
+
+                data['response_message'] = 'Phone number is already taken'
+
+                data_response.append(data)
+
+            elif data['phone_number'] is None:
+
+                data['response_message'] = 'Phone number is required'
+
                 data_response.append(data)
             
             elif User.objects.filter(email=data['email']).filter():
-                data.update(
-                    {'response':'Email already taken'}
-                )
+
+                data['response_message'] = 'Email already taken'
+
                 data_response.append(data)
             
             else:
@@ -1455,7 +1470,9 @@ def electorate_excelupload(request):
                     first_name=data['first_name'],
                     last_name=data['last_name'],
                     other_name=data['other_name'],
-                    email=data['email']
+                    email=data['email'],
+                    phone_number=data['phone_number'],
+                    password=generate_password(10)
                 )
 
                 ElectorateProfile.objects.create(
@@ -1464,13 +1481,8 @@ def electorate_excelupload(request):
                     hall=Hall.objects.get(id=hall_id),
                     polling_station=PollingStation.objects.get(id=polling_station_id)
                 )
-
-                data.update(
-                    {'response':'Saved successfully'}
-                )
-                data_response.append(data)
-
-                return JsonResponse({'code':200, 'message':'Data uploaded successfully', 'response_data':data_response})
+        
+        return JsonResponse({'code':200, 'message':'All data uploaded successfully', 'response_data':data_response, 'response_length':len(data_response), 'data_report':f'{len(data_response)} out {len(all_data)} data was unable to upload. Check from table to see those data with errors.'})
     else:
 
         programmes = Programme.objects.all()

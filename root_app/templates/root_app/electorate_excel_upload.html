@@ -16,7 +16,7 @@
             <h5 class="card-title">Add new electorates</h5>
             <p class="card-description">Use this form to upload bulk electorates</p>
 
-            <form action="" id="excel-data-form">
+            <form action="{% url 'root_app:electorate_excelupload' %}" id="excel-data-form">
 
                 {% csrf_token %}
 
@@ -43,7 +43,7 @@
                         <option value="">Choose Hall</option>
 
                         {% for data in halls %}
-                            <option value="">{{data.hall_name}}</option>
+                            <option value="{{data.id}}">{{data.hall_name}}</option>
                         {% endfor %}
 
                     </select>
@@ -62,6 +62,10 @@
                 <div class="row form-group">
                     <label for="excel_file" class="col-sm-2 col-form-label">Excel file</label>
                     <input type="file" name="excel_file" id="excel_file" accept=".xlsx" class="col-sm-5 form-control">
+
+                    <div class="col-sm-4 ms-3" id="excel-loading-box">
+                        
+                    </div>
                 </div>
 
                 <div class="row form-group">
@@ -98,4 +102,5 @@
 {% block scripts %}
 <script src="{% static 'root_app/scripts/get-class.js' %}"></script>
 <script src="{% static 'root_app/scripts/get_exceldata.js' %}"></script>
+<script src="{% static 'root_app/scripts/electorate_excelupload.js' %}"></script>
 {% endblock %}
