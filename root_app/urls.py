@@ -42,4 +42,5 @@ urlpatterns = [
     path('electorates/', views.electorates, name='electorates'), 
     path('edit_electorate/<str:electorate_id>/', views.edit_electorate, name='edit_electorate'),     
     path('electorate_excelupload/', views.electorate_excelupload, name='electorate_excelupload'),     
+    path('get_excel_data/', views.get_excel_data, name='get_excel_data'),     
 ]

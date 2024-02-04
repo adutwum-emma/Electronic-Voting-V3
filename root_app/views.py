@@ -10,7 +10,7 @@ from root_app.models import (Programme, YearClass,
                              Election, ElectoralCommissioner, 
                              AllowedPollingStation, Programme,
                              Hall, PollingStation, ElectorateProfile)
-from openpyxl import workbook
+from openpyxl import load_workbook
 
 def is_superuser(user):
 
@@ -1389,7 +1389,7 @@ def electorate_excelupload(request):
         elif polling_station == '':
             return JsonResponse({'code':400, 'message':'No polling station is selected'})
         
-        book = workbook(excel_file)
+        book = load_workbook(excel_file)
         
         sheet = book.active
 
@@ -1490,24 +1490,29 @@ def electorate_excelupload(request):
 
 def get_excel_data(request):
 
-    excel_file = request.FILES['excel_file']
+    try:
 
-    book = workbook(excel_file)
+        excel_file = request.FILES['excel_file']
 
-    sheet = book.active
+        book = load_workbook(excel_file)
 
-    rows = sheet.rows
+        sheet = book.active
 
-    headers = [ data.values for data in next(rows) ]
+        rows = sheet.rows
 
-    all_data =[]
+        headers = [ data.value for data in next(rows) ]
 
-    for row in rows:
+        all_data =[]
 
-        data_list = []
+        for row in rows:
 
-        for key, value in zip(headers, row):
-            data_list.append(value.value)
-        all_data.append(data_list)
+            data_list = []
 
-    return JsonResponse()
+            for key, value in zip(headers, row):
+                data_list.append(value.value)
+            all_data.append(data_list)
+
+        return JsonResponse({'headers':headers, 'all_data':all_data})
+    
+    except Exception:
+        return JsonResponse({'headers':[], 'all_data':[]})

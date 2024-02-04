@@ -16,7 +16,7 @@
             <h5 class="card-title">Add new electorates</h5>
             <p class="card-description">Use this form to upload bulk electorates</p>
 
-            <form action="">
+            <form action="" id="excel-data-form">
 
                 {% csrf_token %}
 
@@ -65,8 +65,25 @@
                 </div>
 
                 <div class="row form-group">
+                    <div class="table-responsive" style="max-height: 300px;">
+                        <table class="table table-bordered" id="excel-datatable">
+                            <thead>
+                                
+                            </thead>
+            
+                            <tbody>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="row form-group">
                     <div class="col-sm-5">
                         <button class="btn btn-primary" type="submit">SAVE</button>
+                    </div>
+                    <div class="col-sm-5" id="excel-loading-box">
+                        
                     </div>
                 </div>
         
@@ -80,4 +97,5 @@
 
 {% block scripts %}
 <script src="{% static 'root_app/scripts/get-class.js' %}"></script>
+<script src="{% static 'root_app/scripts/get_exceldata.js' %}"></script>
 {% endblock %}
