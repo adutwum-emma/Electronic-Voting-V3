@@ -9,7 +9,7 @@ from root_app.models import (Programme, YearClass,
                              Hall, PollingStation, 
                              Election, ElectoralCommissioner, 
                              AllowedPollingStation, Programme,
-                             Hall, PollingStation, ElectorateProfile)
+                             Hall, PollingStation, ElectorateProfile, Position)
 from openpyxl import load_workbook
 import json
 
@@ -1133,7 +1133,7 @@ def delete_election(request):
 
         return JsonResponse({'code':200, 'message':'Election deleted successfully'})
     
-    except Programme.DoesNotExist:
+    except Election.DoesNotExist:
         return JsonResponse({'code':400, 'message':'Election id or does not exist'})
     
     except Exception:
@@ -1413,76 +1413,83 @@ def electorate_excelupload(request):
         
         data_response = []
 
-        for data in all_data:
 
-            if data['index_number'] is None:
+        try:
 
-                data['response_message'] = 'Index number is required'
-                 
-                data_response.append(data)
 
-            elif User.objects.filter(username=data['index_number']).exists():
+            for data in all_data:
 
-                data['response_message'] = 'Index number already taken'
+                if data['index_number'] is None:
 
-                data_response.append(data)
+                    data['response_message'] = 'Index number is required'
+                    
+                    data_response.append(data)
 
-            elif data['first_name'] is None:
+                elif User.objects.filter(username=data['index_number']).exists():
 
-                data['response_message'] = 'First name is required'
+                    data['response_message'] = 'Index number already taken'
 
-                data_response.append(data)
-         
-            elif data['last_name'] is None:
+                    data_response.append(data)
 
-                data['response_message'] = 'Last name is required'
+                elif data['first_name'] is None:
 
-                data_response.append(data)
+                    data['response_message'] = 'First name is required'
+
+                    data_response.append(data)
             
-            elif data['email'] is None:
+                elif data['last_name'] is None:
 
-                data['response_message'] = 'Email is required'
+                    data['response_message'] = 'Last name is required'
 
-                data_response.append(data)
+                    data_response.append(data)
+                
+                elif data['email'] is None:
 
-            elif User.objects.filter(phone_number=data['phone_number']).exists():
+                    data['response_message'] = 'Email is required'
 
-                data['response_message'] = 'Phone number is already taken'
+                    data_response.append(data)
 
-                data_response.append(data)
+                elif User.objects.filter(phone_number=data['phone_number']).exists():
 
-            elif data['phone_number'] is None:
+                    data['response_message'] = 'Phone number is already taken'
 
-                data['response_message'] = 'Phone number is required'
+                    data_response.append(data)
 
-                data_response.append(data)
+                elif data['phone_number'] is None:
+
+                    data['response_message'] = 'Phone number is required'
+
+                    data_response.append(data)
+                
+                elif User.objects.filter(email=data['email']).filter():
+
+                    data['response_message'] = 'Email already taken'
+
+                    data_response.append(data)
+                
+                else:
+
+                    user = User.objects.create_user(
+                        username=data['index_number'],
+                        first_name=data['first_name'],
+                        last_name=data['last_name'],
+                        other_name=data['other_name'],
+                        email=data['email'],
+                        phone_number=data['phone_number'],
+                        password=generate_password(10)
+                    )
+
+                    ElectorateProfile.objects.create(
+                        user=user,
+                        year_class=YearClass.objects.get(id=class_id),
+                        hall=Hall.objects.get(id=hall_id),
+                        polling_station=PollingStation.objects.get(id=polling_station_id)
+                    )
             
-            elif User.objects.filter(email=data['email']).filter():
-
-                data['response_message'] = 'Email already taken'
-
-                data_response.append(data)
-            
-            else:
-
-                user = User.objects.create_user(
-                    username=data['index_number'],
-                    first_name=data['first_name'],
-                    last_name=data['last_name'],
-                    other_name=data['other_name'],
-                    email=data['email'],
-                    phone_number=data['phone_number'],
-                    password=generate_password(10)
-                )
-
-                ElectorateProfile.objects.create(
-                    user=user,
-                    year_class=YearClass.objects.get(id=class_id),
-                    hall=Hall.objects.get(id=hall_id),
-                    polling_station=PollingStation.objects.get(id=polling_station_id)
-                )
+            return JsonResponse({'code':200, 'message':'All data uploaded successfully', 'response_data':data_response, 'response_length':len(data_response), 'data_report':f'{len(data_response)} out {len(all_data)} data was unable to upload. Check from table to see those data with errors.'})
         
-        return JsonResponse({'code':200, 'message':'All data uploaded successfully', 'response_data':data_response, 'response_length':len(data_response), 'data_report':f'{len(data_response)} out {len(all_data)} data was unable to upload. Check from table to see those data with errors.'})
+        except Exception as e:
+            return JsonResponse({'code':500, 'message':str(e)})
     else:
 
         programmes = Programme.objects.all()
@@ -1528,3 +1535,97 @@ def get_excel_data(request):
     
     except Exception:
         return JsonResponse({'headers':[], 'all_data':[]})
+
+@login_required(login_url='authentication_app:login')
+@permission_required('authentication_app.delete_user', login_url='root_app:permissible_page')
+def delete_electorate(request):
+
+    try:
+        user_id = request.POST['user_id']
+
+        electrorate = User.objects.get(id=user_id)
+        electrorate.delete()
+
+        return JsonResponse({'code':200, 'message':'Electorate deleted successfully'})
+    
+    except User.DoesNotExist:
+        return JsonResponse({'code':400, 'message':'Electorate id or does not exist'})
+    
+    except Exception:
+        return JsonResponse({'code':400, 'message':'Something went wrong, try again'})
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('authentication_app.delete_user', login_url='root_app:permissible_page')
+def delete_bulkelectorates(request):
+
+    ids = request.POST.getlist('ids[]')
+
+    for data in ids:
+        User.objects.get(id=data).delete()
+
+    return JsonResponse({'code':200, 'message':'Electorate(s) deleted successfully'})
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('authentication_app.add_position', login_url='root_app:permissible_page')
+def position(request, position_id=None):
+
+    is_update = False
+
+    if position_id is not None:
+        is_update = True
+
+    if request.method == 'POST':
+        election_id = request.POST['election']
+        position_name = request.POST['postion_name']
+        description = request.POST['description']
+
+        if election_id is None:
+            return JsonResponse({'code':400, 'message':'Select election'})
+        
+        elif position_name is None:
+            return JsonResponse({'code':400, 'message':'Position name is required'})
+
+        if is_update:
+
+            position = Position.objects.get(id=position_id)
+            position.election=Election.objects.get(id=election_id)
+            position.position_name=position_name
+            position.position_description=description
+            position.save()
+
+        else:   
+
+            Position.objects.create(
+                election=Election.objects.get(id=election_id),
+                position_name=position_name,
+                description=description
+            )
+        
+        if is_update:
+            return JsonResponse({'code':200, 'message':'Position is updated successfully'})
+        else:
+            return JsonResponse({'code':200, 'message': 'New position is added successfully'})
+    else:
+
+        if is_update:
+            
+            try:
+
+                position = Position.objects.get(id=position_id)
+            
+            except Position.DoesNotExist:
+                return render(request, 'root_app/error-404.html')
+            
+            except ValueError:
+                return render(request, 'root_app/error-404.html')
+
+            context = {
+                'position':position
+            }
+
+            return render(request, 'root_app/position.html', context)
+
+        else:
+            return render(request, 'root_app/position.html')

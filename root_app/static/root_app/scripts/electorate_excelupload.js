@@ -66,6 +66,12 @@ $(document).on('submit', '#excel-data-form', function(e){
                     warningValidator(response.data_report, "Warning")
                 }
                 else{
+                    $('#excel-data-form')[0].reset()
+
+                    $('#heads').empty()
+
+                    $("#excel-datatable").find('tbody').empty()
+
                     successValidator(response.message, 'Success')
                 }
 

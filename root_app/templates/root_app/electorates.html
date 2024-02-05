@@ -17,10 +17,19 @@
             <p class="card-description">
                 All electorates
             </p>
+
+            {% if perms.root_app.delete_electorate %}
+                <button class="btn btn-outline-danger btn-icon-text mb-3" id="delete-button" title="Click to delete all selected electorates">
+                    <i class="mdi mdi-delete"></i>Delete selected
+                </button>
+            {% endif %}
+
+
             <div class="table-responsive">
                 <table class="table table-striped table-hover" id="dataTable">
                     <thead>
                         <tr>
+                            <td><input type="checkbox" id="check-all"></td>
                             <th>#</th>
                             <th>Name</th>
                             <th>Index number</th>
@@ -33,6 +42,7 @@
                     <tbody>
                         {% for data in electorates %}
                         <tr id="electorate{{data.id}}">
+                            <td><input type="checkbox" value="{{data.id}}"></td>
                             <td>{{forloop.counter}}</td>
                             <td>{{data.full_name}}</td>
                             <td>{{data.index_number}}</td>
@@ -43,7 +53,7 @@
                                 {% csrf_token %}
 
                                 {% if perms.root_app.delete_electorate %}
-                                    <button class="btn btn-rounded btn-icon btn-danger delete-hall"><i class="mdi mdi-delete"></i></button>
+                                    <button class="btn btn-rounded btn-icon btn-danger delete-electorate"><i class="mdi mdi-delete"></i></button>
                                 {% endif %}
 
                                 {% if perms.root_app.change_electorate %}
@@ -64,6 +74,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static 'root_app/scripts/delete-hall.js' %}"></script>
+    <script src="{% static 'root_app/scripts/delete-electorate.js' %}"></script>
+    <script src="{% static 'root_app/scripts/delete-bulk.js' %}"></script>
 {% endblock %}
 

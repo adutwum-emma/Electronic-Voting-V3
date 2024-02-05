@@ -364,19 +364,27 @@
           </li>
           {% endif %}
 
+          {% if perms.root_app.add_position or perms.root_app.view_position %}
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#positions" aria-expanded="false" aria-controls="error">
               <i class="mdi mdi-checkbox-marked-circle menu-icon"></i>
-              <span class="menu-title">Asp. Positions</span>
+              <span class="menu-title">Positions</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="positions">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> Add Position </a></li>
+                {% if perms.root_app.add_position %}
+                <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:position' %}"> Add Position </a></li>
+                {% endif %}
+
+                {% if perms.root_app.view_position %}
                 <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> Positions </a></li>
+                {% endif %}
               </ul>
             </div>
           </li>
+
+          {% endif %}
 
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#aspirants" aria-expanded="false" aria-controls="error">
