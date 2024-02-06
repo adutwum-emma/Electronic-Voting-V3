@@ -82,7 +82,11 @@
                         <select name="electoral_commissioner" id="electoral_commissioner" class="form-control col-sm-9">
                             <option value="">Choose a Commissioner</option>
                             {% for data in users %}
-                            <option value="{{data.id}}">{{data.full_name}} | {{data.username}}</option>
+                                {% if data.id == user.id %}
+                                    <option value="{{data.id}}"> {{data.full_name}} <strong>(You)</strong></option>
+                                {% else %}
+                                    <option value="{{data.id}}">{{data.full_name}} | {{data.username}}</option>
+                                {% endif %}
                             {% endfor %}
                         </select>
                     </div>

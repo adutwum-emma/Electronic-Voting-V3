@@ -108,6 +108,7 @@ class Position(models.Model):
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     position_name = models.CharField(max_length=50)
     position_description = models.TextField()
+    number_of_asp = models.PositiveIntegerField()
     time_stamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:

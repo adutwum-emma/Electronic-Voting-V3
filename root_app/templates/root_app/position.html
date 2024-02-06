@@ -13,21 +13,30 @@
                 <h4 class="card-title">Position</h4>
 
                 {% if is_update == True %}
-                <form action="" id="position">
+                    <form action="{% url 'root_app:position' position.id %}" id="position">
                 {% else %}
-                <form action="" id="position">
+                    <form action="{% url 'root_app:position' %}" id="position">
                 {% endif %}
 
-                {% csrf_token %}
-                
                 {% if is_update %}
                     <input type="hidden" value="true" id="is_update">
                 {% endif %}
+
+                {% csrf_token %}
 
                     <div class="row form-group">
                         <label for="election" class="col-sm-2 col-form-label">Election</label>
                         <select name="election" id="election" class="col-sm-5 form-control">
                             <option value="">Choose Election</option>
+                            {% if perms.root_app.add_election and user.user_type != 'superuser' %}
+                                {% for data in user.electoralcommissioner_set.all %}
+                                    <option value="{{data.id}}">{{data.election.election_name}}</option>
+                                {% endfor %}
+                            {% else %}
+                                {% for data in elections %}
+                                    <option value="{{data.id}}">{{data.election_name}}</option>
+                                {% endfor %}
+                            {% endif %}
                         </select>
                     </div>
 
@@ -37,8 +46,13 @@
                     </div>
 
                     <div class="row form-group">
-                        <label for="description" class="col-sm-2 col-form-label">Position Name</label>
+                        <label for="description" class="col-sm-2 col-form-label">Position Description</label>
                         <textarea name="description" id="description" cols="30" rows="10" class="form-control col-sm-5">{{position.position_description}}</textarea>
+                    </div>
+
+                    <div class="row form-group">
+                        <label for="description" class="col-sm-2 col-form-label">Number of Aspirants</label>
+                        <input type="number" min="1" name="no_aspirants" id="no_aspirants" class="col-sm-5 form-control">
                     </div>
 
                     <div class="form-group row">

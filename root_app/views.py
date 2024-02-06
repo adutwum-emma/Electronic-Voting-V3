@@ -1568,7 +1568,7 @@ def delete_bulkelectorates(request):
 
 
 @login_required(login_url='authentication_app:login')
-@permission_required('authentication_app.add_position', login_url='root_app:permissible_page')
+@permission_required('root_app.add_position', login_url='root_app:permissible_page')
 def position(request, position_id=None):
 
     is_update = False
@@ -1580,6 +1580,7 @@ def position(request, position_id=None):
         election_id = request.POST['election']
         position_name = request.POST['postion_name']
         description = request.POST['description']
+        number_of_asp = request.POST['no_aspirants']
 
         if election_id is None:
             return JsonResponse({'code':400, 'message':'Select election'})
@@ -1587,12 +1588,16 @@ def position(request, position_id=None):
         elif position_name is None:
             return JsonResponse({'code':400, 'message':'Position name is required'})
 
+        elif number_of_asp is None:
+            return JsonResponse({'code':400, 'message':'Number of aspirants required'})
+
         if is_update:
 
             position = Position.objects.get(id=position_id)
             position.election=Election.objects.get(id=election_id)
             position.position_name=position_name
             position.position_description=description
+            position.number_of_asp=number_of_asp
             position.save()
 
         else:   
@@ -1600,6 +1605,7 @@ def position(request, position_id=None):
             Position.objects.create(
                 election=Election.objects.get(id=election_id),
                 position_name=position_name,
+                number_of_asp=number_of_asp,
                 description=description
             )
         
@@ -1609,11 +1615,26 @@ def position(request, position_id=None):
             return JsonResponse({'code':200, 'message': 'New position is added successfully'})
     else:
 
+        elections = Election.objects.all()     
+
+        context = {
+            'elections':elections
+        }
+
         if is_update:
             
             try:
 
                 position = Position.objects.get(id=position_id)
+
+                new_context = {
+                    'position':position,
+                    'is_update':is_update,
+                }
+
+                context.update(new_context)
+
+                return render(request, 'root_app/position.html', context)
             
             except Position.DoesNotExist:
                 return render(request, 'root_app/error-404.html')
@@ -1621,11 +1642,5 @@ def position(request, position_id=None):
             except ValueError:
                 return render(request, 'root_app/error-404.html')
 
-            context = {
-                'position':position
-            }
-
-            return render(request, 'root_app/position.html', context)
-
         else:
-            return render(request, 'root_app/position.html')
+            return render(request, 'root_app/position.html', context)
