@@ -47,4 +47,5 @@ urlpatterns = [
     path('delete_bulkelectorates/', views.delete_bulkelectorates, name='delete_bulkelectorates'),     
     path('position/', views.position, name='position'),     
     path('edit_position/<str:position_id>/', views.position, name='position'),     
+    path('positions/', views.positions, name='positions'),     
 ]

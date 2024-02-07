@@ -1578,17 +1578,17 @@ def position(request, position_id=None):
 
     if request.method == 'POST':
         election_id = request.POST['election']
-        position_name = request.POST['postion_name']
+        position_name = request.POST['position_name']
         description = request.POST['description']
         number_of_asp = request.POST['no_aspirants']
 
-        if election_id is None:
-            return JsonResponse({'code':400, 'message':'Select election'})
+        if election_id == '':
+            return JsonResponse({'code':400, 'message':'Select Election'})
         
-        elif position_name is None:
+        elif position_name  == '':
             return JsonResponse({'code':400, 'message':'Position name is required'})
 
-        elif number_of_asp is None:
+        elif number_of_asp  == '':
             return JsonResponse({'code':400, 'message':'Number of aspirants required'})
 
         if is_update:
@@ -1606,7 +1606,7 @@ def position(request, position_id=None):
                 election=Election.objects.get(id=election_id),
                 position_name=position_name,
                 number_of_asp=number_of_asp,
-                description=description
+                position_description=description
             )
         
         if is_update:
@@ -1644,3 +1644,20 @@ def position(request, position_id=None):
 
         else:
             return render(request, 'root_app/position.html', context)
+        
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.view_position', login_url='root_app:permissible_page')
+def positions(request):
+
+    posts = Position.objects.all()
+
+    elections = Election.objects.all()
+
+    context = {
+        'positions':posts,
+        'elections':elections,
+    }
+
+    return render(request, 'root_app/positions.html', context)

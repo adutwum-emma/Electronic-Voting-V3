@@ -6,7 +6,7 @@ $(document).on('submit', '#position', function(e){
 
     $.ajax({
 
-        url: $('#position').prop('action', true),
+        url: $('#position').prop('action'),
         type: 'post',
         contentType: false,
         processData: false,
@@ -23,7 +23,7 @@ $(document).on('submit', '#position', function(e){
             if(response.code ==200){
                 successValidator(response.message, 'Success')
 
-                if($('#is_update').val()){
+                if(!$('#is_update').val()){
                     $('#position')[0].reset()
                 }
 
@@ -48,7 +48,7 @@ $(document).on('submit', '#position', function(e){
 
 function successValidator(message, title){
     toastr.success(message, title,{
-        "positionClass": "toast-bottom-center",
+        "positionClass": "toast-bottom-right",
         timeOut: 5000,
         "closeButton": true,
         "debug": false,
@@ -69,7 +69,7 @@ function successValidator(message, title){
 
 function errorValidator(message, title){
     toastr.error(message, title,{
-        "positionClass": "toast-bottom-center",
+        "positionClass": "toast-bottom-right",
         timeOut: 5000,
         "closeButton": true,
         "debug": false,

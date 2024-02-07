@@ -31,7 +31,7 @@
                     
                     <tbody>
                         
-                        {% if perms.root_app.add_election and user.user_type != 'superuser' %}
+                        {% if perms.root_app.add_election and user.user_type != 'superuser' and not perms.root_app.can_assign_commnissioner_role %}
 
                             {% for data in user.electoralcommissioner_set.all %}
                                 <tr id="election{{data.election.id}}">

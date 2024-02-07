@@ -378,7 +378,7 @@
                 {% endif %}
 
                 {% if perms.root_app.view_position %}
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> Positions </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:positions' %}"> Positions </a></li>
                 {% endif %}
               </ul>
             </div>
