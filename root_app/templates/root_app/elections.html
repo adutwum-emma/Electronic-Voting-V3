@@ -34,7 +34,7 @@
                         {% if perms.root_app.add_election and user.user_type != 'superuser' and not perms.root_app.can_assign_commnissioner_role %}
 
                             {% for data in user.electoralcommissioner_set.all %}
-                                <tr id="election{{data.election.id}}">
+                               <tr id="election{{data.election.id}}">
                                     <td>{{forloop.counter}}</td>
                                     <td>{{data.election.election_name}}</td>
                                     <td>{{data.election.electoral_comm}}</td>

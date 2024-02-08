@@ -17,8 +17,12 @@
 
             <div class="row">
                 <label for="election" class=" col-sm-2">FILTER : </label>
+
+                {% csrf_token %}
+
+
                 <select name="election" id="election" class="form-control col-sm-8 mb-3">
-                    <option value="">Select Election</option>
+                    <option value="">----Select Election----</option>
 
                         {% if perms.root_app.add_election and user.user_type != 'superuser' and not perms.root_app.can_assign_commnissioner_role %}
                                 {% for data in user.electoralcommissioner_set.all %}
@@ -56,25 +60,33 @@
                     </thead>
                     
                     <tbody>
-                        {% for data in positions %}
-                        <tr id="hall{{data.id}}">
-                            <td>{{forloop.counter}}</td>
-                            <td>{{data.position_name}}</td>
-                            <td>{{data.election.election_name}}</td>
-                            <td>
-                                <input type="hidden" value="{{data.id}}">
-                                {% csrf_token %}
+                        {% if perms.root_app.add_election and user.user_type != 'superuser' and not perms.root_app.can_assign_commnissioner_role %}
 
-                                {% if perms.root_app.delete_position %}
-                                    <button class="btn btn-rounded btn-icon btn-danger delete-post"><i class="mdi mdi-delete"></i></button>
-                                {% endif %}
+                            
 
-                                {% if perms.root_app.change_position %}
-                                    <a href="{% url 'root_app:position' data.id %}" class="btn btn-rounded btn-primary"><i class="mdi mdi-pencil"></i></a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
+                        {% else %}
+
+                            {% for data in positions %}
+                                <tr id="hall{{data.id}}">
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{data.position_name}}</td>
+                                    <td>{{data.election.election_name}}</td>
+                                    <td>
+                                        <input type="hidden" value="{{data.id}}">
+                                        {% csrf_token %}
+
+                                        {% if perms.root_app.delete_position %}
+                                            <button class="btn btn-rounded btn-icon btn-danger delete-post"><i class="mdi mdi-delete"></i></button>
+                                        {% endif %}
+
+                                        {% if perms.root_app.change_position %}
+                                            <a href="{% url 'root_app:position' data.id %}" class="btn btn-rounded btn-primary"><i class="mdi mdi-pencil"></i></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                        {% endif %}
                     </tbody>
                 </table>
             </div>
@@ -88,5 +100,6 @@
 
 {% block scripts %}
     <script src="{% static 'root_app/scripts/delete-hall.js' %}"></script>
+    <script src="{% static 'root_app/scripts/position-filter.js' %}"></script>
 {% endblock %}
 

@@ -48,4 +48,5 @@ urlpatterns = [
     path('position/', views.position, name='position'),     
     path('edit_position/<str:position_id>/', views.position, name='position'),     
     path('positions/', views.positions, name='positions'),     
+    path('position_filter/', views.position_filter, name='position_filter'),     
 ]

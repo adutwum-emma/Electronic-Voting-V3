@@ -11,7 +11,7 @@ from root_app.models import (Programme, YearClass,
                              AllowedPollingStation, Programme,
                              Hall, PollingStation, ElectorateProfile, Position)
 from openpyxl import load_workbook
-import json
+from django.urls import reverse
 
 def is_superuser(user):
 
@@ -1661,3 +1661,42 @@ def positions(request):
     }
 
     return render(request, 'root_app/positions.html', context)
+
+
+def position_filter(request):
+
+    try:
+        election_id = request.POST['election']
+
+        election = Position.objects.filter(election_id=Election.objects.get(id=election_id))
+    
+    except ValueError:
+        if request.user.has_perm('root_app.add_election') and request.user.user_type != 'superuser' and not request.user.has_perm('root_app.can_assign_commnissioner_role'):
+            print(True)
+            return JsonResponse({'data':[]})
+        
+        election = Position.objects.all()
+
+    positions = []
+
+    for data in election:
+
+        post = {
+                'id':data.id,
+                'position_name':data.position_name,
+                'election':data.election.election_name,
+                'url': reverse('root_app:position', args=[data.id]),
+                'can_delete':False,
+                'can_change':False,
+            }
+
+        positions.append(post)
+
+        if request.user.has_perm('root_app.delete_postion'):
+            post.update({'can_delete':True})
+        
+        if request.user.has_perm('root_app.change_position'):
+            post.update({'can_change':True})
+
+
+    return JsonResponse({'data':positions})
