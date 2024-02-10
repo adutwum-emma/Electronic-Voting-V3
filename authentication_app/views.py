@@ -5,6 +5,8 @@ from django.contrib.auth import authenticate
 from django.contrib import auth
 from django.urls import reverse
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
+
 
 def login(request):
 

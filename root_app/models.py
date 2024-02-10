@@ -127,7 +127,7 @@ class Aspirant(models.Model):
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     position = models.ForeignKey(Position, on_delete=models.CASCADE)
     ballot_number = models.PositiveIntegerField()
-    time_stamp = models.DateTimeField()
+    time_stamp = models.DateTimeField(auto_now_add=True)
 
 
     @property

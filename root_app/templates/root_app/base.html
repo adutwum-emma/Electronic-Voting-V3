@@ -386,6 +386,7 @@
 
           {% endif %}
 
+          {% if perms.root_app.add_aspirant or perms.root_app.view_aspirant %}
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#aspirants" aria-expanded="false" aria-controls="error">
               <i class="mdi mdi-account-plus menu-icon"></i>
@@ -394,11 +395,17 @@
             </a>
             <div class="collapse" id="aspirants">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> Add Aspirant </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> Aspirants </a></li>
+                {% if perms.root_app.add_aspirant %}
+                  <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:add_aspirant' %}"> Add Aspirant </a></li>
+                {% endif %}
+
+                {% if perms.root_app.view_aspirant %}
+                <li class="nav-item"> <a class="nav-link" href=""> Aspirants </a></li>
+                {% endif %}
               </ul>
             </div>
           </li>
+          {% endif %}
 
           {% if perms.root_app.add_electorate or perms.root_app.view_electorate or perms.root_app.upload_electorate_with_excel %}
           <li class="nav-item">

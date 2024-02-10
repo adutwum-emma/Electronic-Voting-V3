@@ -31,9 +31,9 @@
                             {% if perms.root_app.add_election and user.user_type != 'superuser' and not perms.root_app.can_assign_commnissioner_role %}
                                 {% for data in user.electoralcommissioner_set.all %}
                                     {% if data.election.id == position.election.id %}
-                                        <option value="{{data.id}}" selected>{{data.election.election_name}}</option>
+                                        <option value="{{data.election.id}}" selected>{{data.election.election_name}}</option>
                                     {% else %}
-                                        <option value="{{data.id}}">{{data.election.election_name}}</option>
+                                        <option value="{{data.election.id}}">{{data.election.election_name}}</option>
                                     {% endif %}
                                 {% endfor %}
                             {% else %}

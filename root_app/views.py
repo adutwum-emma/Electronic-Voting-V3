@@ -9,7 +9,8 @@ from root_app.models import (Programme, YearClass,
                              Hall, PollingStation, 
                              Election, ElectoralCommissioner, 
                              AllowedPollingStation, Programme,
-                             Hall, PollingStation, ElectorateProfile, Position)
+                             Hall, PollingStation, ElectorateProfile, 
+                             Position, Aspirant)
 from openpyxl import load_workbook
 from django.urls import reverse
 
@@ -1700,3 +1701,91 @@ def position_filter(request):
 
 
     return JsonResponse({'data':positions})
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.add_aspirant', login_url='root_app:permissible_page')
+def add_aspirant(request):
+
+    if request.method == "POST":
+        
+        first_name = request.POST['first_name']
+        surname = request.POST['surname']
+        other_name =request.POST['othername']
+        election_id = request.POST['election']
+        position_id = request.POST['position']
+        ballot_number = request.POST['ballot_number']
+
+        try:
+            image = request.FILES['passport_pic']
+        
+        except Exception:
+            return JsonResponse({'code':400, 'message':'Select picture for candidate'})
+        
+        if first_name == '':
+            return JsonResponse({'code':400, 'message':'First name is required'})
+        
+        elif surname == '':
+            return JsonResponse({'code':400, 'message':'Surname is required'})
+        
+        elif election_id == '':
+            return JsonResponse({'code':400, 'message':'Choose a specific election for this cadidate'})
+        
+        elif position_id == '':
+            return JsonResponse({'code':400, 'message':'Choose a position for this candidate'})
+        
+        elif ballot_number == '':
+            return JsonResponse({'code':400, 'message':'Select a ballot number for candidate'})
+
+        if Aspirant.objects.filter(position=Position.objects.get(id=position_id), ballot_number=ballot_number).exists():
+            return JsonResponse({'code':400, 'message':'Ballot number for the selected position is already taken'})
+
+
+        
+        Aspirant.objects.create(
+            passport_picture=image,
+            first_name=first_name,
+            surname=surname,
+            other_name=other_name,
+            election=Election.objects.get(id=election_id),
+            position=Position.objects.get(id=position_id),
+            ballot_number=ballot_number
+        )
+
+        return JsonResponse({"code":200, 'message':'New aspirant added successfully'})
+
+    else:
+
+        elections = Election.objects.all()
+
+
+        context = {
+            'elections':elections,
+        }
+
+        return render(request, 'root_app/add_aspirant.html', context)
+
+def filter_ballotnumber(request):
+
+    try:
+
+        post_id = request.POST['position']
+
+        position = Position.objects.get(id=post_id)
+
+        asp = Aspirant.objects.filter(position=position)
+
+        numbers = [data.ballot_number for data in asp]
+
+        available_number = []
+
+        for posts in range(1, position.number_of_asp + 1):
+            if posts in numbers:
+                continue
+            else:
+                available_number.append(posts)
+
+        return JsonResponse({'data':available_number})
+
+    except Exception:
+        return JsonResponse({'data':[]})

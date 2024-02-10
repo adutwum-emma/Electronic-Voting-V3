@@ -1,0 +1,141 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Add Aspirant {% endblock %}
+
+{% block header %} Add Aspirant {% endblock %}
+
+
+{% block content %}
+
+<style>
+    .image-cover{
+        position: relative;
+        border-radius: 5px;
+    }
+
+    .image-cover img{
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .overlay{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transition: 0.8s;
+    }
+
+    .image-cover button{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: 0.8s;
+    }
+
+    .image-cover:hover .overlay{
+        background-color: rgba(0, 0, 0, 0.33);
+    }
+</style>
+
+<div class="content-wrapper">
+
+    <div class="card">
+    
+        <div class="card-body">
+
+            <h5 class="card-title">Adding Aspirant</h5>
+            <p class="card-description">Use this form to add new candidate</p>
+            
+            <form action="{% url 'root_app:add_aspirant' %}" id="add-aspirant">
+
+                {% csrf_token %}
+
+                <div class="row">
+
+                    <div class="col-sm-4 form-group image-cover">
+                        <input type="file" class="file-input" accept=".jpg, .jpeg, .png" name="passport_pic" style="display: none;">
+                        <img src="{% static 'root_app/avatar-images/avatar.jpg' %}" id="image" alt="">
+                        <div class="overlay"></div>
+                        <button class="btn btn-outline-info image-button" type="button"><i class="mdi mdi-cloud-upload"></i></button>
+                    </div>
+                
+
+                    <div class="col-sm-8">
+                        <div class="row">
+                            <div class="form-group col-sm-6">
+                                <label for="first_name" class="form-label">First name</label>
+                                <input type="text" name="first_name" id="first_name" placeholder="First name" class="form-control">
+                            </div>
+
+                            <div class="form-group col-sm-6">
+                                <label for="surname" class="form-label">Surname</label>
+                                <input type="text" name="surname" id="surname" placeholder="Surname" class="form-control">
+                            </div>
+
+                            <div class="form-group col-sm-6">
+                                <label for="othername" class="form-label">Other name (s)</label>
+                                <input type="text" name="othername" id="othername" placeholder="othername" class="form-control">
+                            </div>
+
+                            <div class="form-group col-sm-6">
+                                <label for="election">Election</label>
+
+                                <select name="election" id="election" class="form-control">
+                                    <option value="">Choose Election</option>
+
+                                    {% if perms.root_app.add_election and user.user_type != 'superuser' and not perms.root_app.can_assign_commnissioner_role %}
+                                        {% for data in user.electoralcommissioner_set.all %}
+                                                <option value="{{data.election.id}}">{{data.election.election_name}}</option>
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for data in elections %}
+                                                <option value="{{data.id}}">{{data.election_name}}</option>
+                                        {% endfor %}
+                                    {% endif %}
+                                </select>
+                            </div>
+
+                            <div class="form-group col-sm-6">
+                                <label for="position">Position</label>
+
+                                <select name="position" id="position" class="form-control">
+                                    <option value="">Choose Position</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-sm-6">
+                                <label for="ballot_number">Ballot number</label>
+
+                                <select name="ballot_number" id="filter_ballotnumber" class="form-control">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-sm-12">
+                                <button class="btn btn-primary asp-button">SAVE</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+        
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/election.js' %}"></script>
+    <script src="{% static 'root_app/scripts/image-selection.js' %}"></script>
+    <script src="{% static 'root_app/scripts/add-aspirant.js' %}"></script>
+{% endblock %}

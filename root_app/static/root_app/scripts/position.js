@@ -17,6 +17,8 @@ $(document).on('submit', '#position', function(e){
                 `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                 <span>Saving...</span>`
             ).prop('disabled', true)
+
+            $('#position').find('input[type=text], input[type=number], select, textarea').prop('disabled', true)
         },
 
         success:function(response){
@@ -33,11 +35,15 @@ $(document).on('submit', '#position', function(e){
             }
 
             $('#position').find('button').text('SAVE').prop('disabled', false)
+
+            $('#position').find('input[type=text], input[type=number], select, textarea').prop('disabled', false)
+
         },
 
         error: function(){
             errorValidator('Something went wrong, try again', 'Error')
             $('#position').find('button').text('SAVE').prop('disabled', false)
+            $('#position').find('input[type=text], input[type=number], select, textarea').prop('disabled', false)
 
         }
 
