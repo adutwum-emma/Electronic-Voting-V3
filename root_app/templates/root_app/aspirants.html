@@ -1,0 +1,97 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Aaspirants/Candidates {% endblock %}
+
+{% block header %} Aaspirants/Candidates  {% endblock %}
+
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Aaspirants/Candidates </h4>
+
+            {% csrf_token %}
+
+            <div class="row mb-3">
+                <div class="col-sm-2">
+                    <label class="form-label">FILTER: </label>
+                </div>
+                <div class="col-sm-5">
+                    <select name="election" id="election" class="form-control">
+                        <option value="">Choose Election</option>
+
+                        {% if perms.root_app.add_election and user.user_type != 'superuser' and not perms.root_app.can_assign_commnissioner_role %}
+                            {% for data in user.electoralcommissioner_set.all %}
+                                    <option value="{{data.election.id}}">{{data.election.election_name}}</option>
+                            {% endfor %}
+                        {% else %}
+                            {% for data in elections %}
+                                    <option value="{{data.id}}">{{data.election_name}}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="col-sm-5">
+                    <select id="position" class="form-control">
+                        <option> Choose Position</option>
+                    </select>
+                </div>
+            </div>
+            <p class="card-description">
+                All Candidates
+            </p>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Full name</th>
+                            <th>Election</th>
+                            <th>Position</th>
+                            <th class="text-center">Ballot Number</th>
+                            <th>Date Added</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+
+                        {% for data in aspirants %}
+                        
+                        <tr>
+                            <td> <img src="{{data.passport_picture.url}}" alt=""> </td>
+                            <td>{{data.full_name}}</td>
+                            <td>{{data.election.election_name}}</td>
+                            <td>{{data.position.position_name}}</td>
+                            <td class="text-center">{{data.ballot_number}}</td>
+                            <td>{{data.time_stamp}}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info"><i class="mdi mdi-eye"></i> </button>
+                                <button class="btn btn-sm btn-primary">Edit <i class="mdi mdi-pencil"></i> </button>
+                                <button class="btn btn-sm btn-danger"> <i class="mdi mdi-delete"></i> </button>
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+                        
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/delete-aspirant.js' %}"></script>
+    <script src="{% static 'root_app/scripts/add-aspirant.js' %}"></script>
+{% endblock %}
+

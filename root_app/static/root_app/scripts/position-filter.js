@@ -22,15 +22,16 @@ $('#election').change(function(){
                     </tr>`
                 )
 
-                if(response.data[ele].can_delete){
+                if(response.data[ele].can_change){
                     $(`#hall${response.data[ele].id}`).append(
-                        `<button class="btn btn-rounded btn-icon btn-danger delete-post"><i class="mdi mdi-delete"></i></button>
+                        `<a href="${response.data[ele].url}"class="btn btn-sm btn-primary me-3"> Edit <i class="mdi mdi-pencil"></i></a>
                         `
                     )
                 }
-                if(response.data[ele].can_change){
+
+                if(response.data[ele].can_delete){
                     $(`#hall${response.data[ele].id}`).append(
-                        `<a href="${response.data[ele].url}" class="btn btn-rounded ms-3 btn-primary"><i class="mdi mdi-pencil"></i></a>
+                        `<button class="btn btn-sm ms-3 btn-danger delete-post"><i class="mdi mdi-delete"></i></button>
                         `
                     )
                 }

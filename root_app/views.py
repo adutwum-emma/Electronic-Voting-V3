@@ -1789,3 +1789,20 @@ def filter_ballotnumber(request):
 
     except Exception:
         return JsonResponse({'data':[]})
+
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.view_aspirant', login_url='root_app:permissible_page')
+def aspirants(request):
+
+    aspirants = Aspirant.objects.all()
+
+    elections = Election.objects.all()
+
+    context = {
+        'aspirants':aspirants,
+        'elections':elections
+    }
+
+    return render(request, 'root_app/aspirants.html', context)

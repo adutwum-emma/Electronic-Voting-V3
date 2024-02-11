@@ -42,16 +42,16 @@
                                 <input type="hidden" value="{{data.id}}">
                                 {% csrf_token %}
 
-                                {% if perms.authentication_app.delete_user %}
-                                <button class="btn btn-rounded btn-icon btn-danger user-delete"><i class="mdi mdi-delete"></i></button>
-                                {% endif %}
-
                                 {% if perms.authentication_app.view_user %}
-                                <a href="{% url 'root_app:view_user' data.id %}" class="btn btn-rounded btn-success"><i class="mdi mdi-eye text-center"></i></a>
+                                <a href="{% url 'root_app:view_user' data.id %}" class="btn btn-sm btn-info"><i class="mdi mdi-eye text-center"></i></a>
                                 {% endif %}
 
                                 {% if perms.authentication_app.change_user %}
-                                <a href="{% url 'root_app:edit_user' data.id %}" class="btn btn-rounded btn-primary"><i class="mdi mdi-pencil"></i></a>
+                                <a href="{% url 'root_app:edit_user' data.id %}" class="btn btn-sm btn-primary"> Edit <i class="mdi mdi-pencil"></i></a>
+                                {% endif %}
+
+                                {% if perms.authentication_app.delete_user %}
+                                <button class="btn btn-sm btn-danger user-delete"><i class="mdi mdi-delete"></i></button>
                                 {% endif %}
                             </td>
                         </tr>

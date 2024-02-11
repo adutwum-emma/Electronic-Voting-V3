@@ -36,16 +36,16 @@
                                 <input type="hidden" value="{{data.id}}">
                                 {% csrf_token %}
 
-                                {% if perms.auth.delete_group %}
-                                <button class="btn btn-rounded btn-icon btn-danger delete-group"><i class="mdi mdi-delete"></i></button>
+                                {% if perms.auth.change_group %}
+                                <a href="{% url 'root_app:group' data.id %}" class="btn btn-sm btn-primary"> Edit <i class="mdi mdi-pencil"></i></a>
                                 {% endif %}
 
                                 {% if perms.auth.add_permission or perms.auth.change_permission %}
-                                <a href="{% url 'root_app:group_permissions' data.id %}" class="btn btn-rounded btn-success" title="permissions"><i class="mdi mdi-lock text-center"></i></a>
+                                <a href="{% url 'root_app:group_permissions' data.id %}" class="btn btn-sm btn-success" title="permissions"><i class="mdi mdi-lock text-center"></i></a>
                                 {% endif %}
 
-                                {% if perms.auth.change_group %}
-                                <a href="{% url 'root_app:group' data.id %}" class="btn btn-rounded btn-primary"><i class="mdi mdi-pencil"></i></a>
+                                {% if perms.auth.delete_group %}
+                                <button class="btn btn-sm btn-danger delete-group"><i class="mdi mdi-delete"></i></button>
                                 {% endif %}
                             </td>
                         </tr>

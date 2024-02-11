@@ -75,12 +75,12 @@
                                         <input type="hidden" value="{{data.id}}">
                                         {% csrf_token %}
 
-                                        {% if perms.root_app.delete_position %}
-                                            <button class="btn btn-rounded btn-icon btn-danger delete-post"><i class="mdi mdi-delete"></i></button>
+                                        {% if perms.root_app.change_position %}
+                                            <a href="{% url 'root_app:position' data.id %}" class="btn btn-sm btn-primary"> Edit <i class="mdi mdi-pencil"></i></a>
                                         {% endif %}
 
-                                        {% if perms.root_app.change_position %}
-                                            <a href="{% url 'root_app:position' data.id %}" class="btn btn-rounded btn-primary"><i class="mdi mdi-pencil"></i></a>
+                                        {% if perms.root_app.delete_position %}
+                                            <button class="btn btn-sm btn-danger delete-post"><i class="mdi mdi-delete"></i></button>
                                         {% endif %}
                                     </td>
                                 </tr>

@@ -43,12 +43,12 @@
                                         <input type="hidden" value="{{data.id}}">
                                         {% csrf_token %}
 
-                                        {% if perms.root_app.delete_election %}
-                                        <button class="btn btn-rounded btn-icon btn-danger delete-election"><i class="mdi mdi-delete"></i></button>
+                                        {% if perms.root_app.change_election %}
+                                        <a href="{% url 'root_app:edit_election' data.election.id %}" class="btn btn-sm btn-primary"> Edit <i class="mdi mdi-pencil"></i></a>
                                         {% endif %}
 
-                                        {% if perms.root_app.change_election %}
-                                        <a href="{% url 'root_app:edit_election' data.election.id %}" class="btn btn-rounded btn-primary"><i class="mdi mdi-pencil"></i></a>
+                                        {% if perms.root_app.delete_election %}
+                                        <button class="btn btn-sm btn-danger delete-election"><i class="mdi mdi-delete"></i></button>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -66,12 +66,12 @@
                                     <input type="hidden" value="{{data.id}}">
                                     {% csrf_token %}
 
-                                    {% if perms.root_app.delete_election %}
-                                    <button class="btn btn-rounded btn-icon btn-danger delete-election"><i class="mdi mdi-delete"></i></button>
+                                    {% if perms.root_app.change_election %}
+                                    <a href="{% url 'root_app:edit_election' data.id %}" class="btn btn-sm btn-primary"> Edit <i class="mdi mdi-pencil"></i></a>
                                     {% endif %}
 
-                                    {% if perms.root_app.change_election %}
-                                    <a href="{% url 'root_app:edit_election' data.id %}" class="btn btn-rounded btn-primary"><i class="mdi mdi-pencil"></i></a>
+                                    {% if perms.root_app.delete_election %}
+                                    <button class="btn btn-sm btn-danger delete-election"> <i class="mdi mdi-delete"></i></button>
                                     {% endif %}
                                 </td>
                             </tr>
