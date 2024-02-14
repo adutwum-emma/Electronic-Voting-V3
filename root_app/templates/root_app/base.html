@@ -211,7 +211,7 @@
           {% if perms.auth.add_group or perms.auth.view_group %}
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#perm" aria-expanded="false" aria-controls="ui-basic">
-              <i class="typcn typcn-user menu-icon"></i>
+              <i class="mdi mdi-account-multiple menu-icon"></i>
               <span class="menu-title">Group</span>
               <i class="menu-arrow"></i>
             </a>
@@ -368,7 +368,7 @@
           {% if perms.root_app.add_position or perms.root_app.view_position %}
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#positions" aria-expanded="false" aria-controls="error">
-              <i class="mdi mdi-checkbox-marked-circle menu-icon"></i>
+              <i class="mdi mdi-tie menu-icon"></i>
               <span class="menu-title">Positions</span>
               <i class="menu-arrow"></i>
             </a>
@@ -387,7 +387,7 @@
 
           {% endif %}
 
-          {% if perms.root_app.add_aspirant or perms.root_app.view_aspirant %}
+          {% if perms.root_app.add_aspirant or perms.root_app.can_view_aspirants %}
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#aspirants" aria-expanded="false" aria-controls="error">
               <i class="mdi mdi-account-plus menu-icon"></i>
@@ -400,7 +400,7 @@
                   <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:add_aspirant' %}"> Add Aspirant </a></li>
                 {% endif %}
 
-                {% if perms.root_app.view_aspirant %}
+                {% if perms.root_app.can_view_aspirants %}
                 <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:aspirants' %}"> Aspirants </a></li>
                 {% endif %}
               </ul>
@@ -435,6 +435,9 @@
           </li>
           {% endif %}
 
+
+          {% if perms.root_app.view_election_results_list or perms.root_app.view_general_report or perms.root_app.view_detailed_report %}
+
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#report" aria-expanded="false" aria-controls="error">
               <i class="mdi mdi-chart-arc menu-icon"></i>
@@ -443,11 +446,43 @@
             </a>
             <div class="collapse" id="report">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> View Results </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> Detailed Report </a></li>
+                {% if perms.root_app.view_election_results_list %}
+                  <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:election_results' %}"> View Results </a></li>
+                {% endif %}
+
+                {% if perms.root_app.view_general_report %}
+                <li class="nav-item"> <a class="nav-link" href=""> General Report </a></li>
+                {% endif %}
+
+                {% if perms.root_app.view_detailed_report %}
+                <li class="nav-item"> <a class="nav-link" href=""> Detailed Report </a></li>
+                {% endif %}
               </ul>
             </div>
           </li>
+          {% endif %}
+
+          {% if perms.root_app.verify_electorate %}
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#verification" aria-expanded="false" aria-controls="error">
+              <i class="mdi mdi-checkbox-marked-circle menu-icon"></i>
+              <span class="menu-title">Verifaction</span>
+              <i class="menu-arrow"></i>
+            </a>
+
+            <div class="collapse" id="verification">
+              <ul class="nav flex-column sub-menu">
+                {% if perms.root_app.verify_electorate %}
+                  <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:verification' %}"> Verify Electorate </a></li>
+                {% endif %}
+
+                {% if perms.root_app.view_verified_electorates %}
+                  <li class="nav-item"> <a class="nav-link" href=""> Verified Electorates </a></li>
+                {% endif %}
+              </ul>
+            </div>
+          </li>
+          {% endif %}
         </ul>
       </nav>
       <!-- partial -->

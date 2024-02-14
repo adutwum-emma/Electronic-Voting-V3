@@ -22,6 +22,9 @@
                     <label class="form-label">FILTER: </label>
                 </div>
                 <div class="col-sm-5">
+
+                    {% csrf_token %}
+
                     <select name="election" id="election" class="form-control">
                         <option value="">Choose Election</option>
 
@@ -38,7 +41,7 @@
                 </div>
                 <div class="col-sm-5">
                     <select id="position" class="form-control">
-                        <option> Choose Position</option>
+                        <option value=""> Choose Position</option>
                     </select>
                 </div>
             </div>
@@ -53,36 +56,95 @@
                             <th>Full name</th>
                             <th>Election</th>
                             <th>Position</th>
-                            <th class="text-center">Ballot Number</th>
-                            <th>Date Added</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     
-                    <tbody>
+                    <tbody id="list-body">
 
-                        {% for data in aspirants %}
-                        
-                        <tr>
-                            <td> <img src="{{data.passport_picture.url}}" alt=""> </td>
-                            <td>{{data.full_name}}</td>
-                            <td>{{data.election.election_name}}</td>
-                            <td>{{data.position.position_name}}</td>
-                            <td class="text-center">{{data.ballot_number}}</td>
-                            <td>{{data.time_stamp}}</td>
-                            <td>
-                                <button class="btn btn-sm btn-info"><i class="mdi mdi-eye"></i> </button>
-                                <button class="btn btn-sm btn-primary">Edit <i class="mdi mdi-pencil"></i> </button>
-                                <button class="btn btn-sm btn-danger"> <i class="mdi mdi-delete"></i> </button>
-                            </td>
-                        </tr>
+                        {% if perms.root_app.add_election and user.user_type != 'superuser' and not perms.root_app.can_assign_commnissioner_role %}
 
-                        {% endfor %}
+                            {% for data in aspirants %}
+
+                                {% if data.election.electoralcommissioner.user.id == user.id %}
+                                    <tr id="aspirant{{data.id}}">
+                                        <td> <img src="{{data.passport_picture.url}}" alt=""> </td>
+                                        <td>{{data.full_name}}</td>
+                                        <td>{{data.election.election_name}}</td>
+                                        <td>{{data.position.position_name}}</td>
+                                        <td>
+                                            <input type="hidden" value="{{data.id}}">
+                                            {% csrf_token %}
+
+                                            {% if perms.root_app.view_aspirant %}
+                                                <button class="btn btn-sm btn-info view-asp"><i class="mdi mdi-eye"></i> </button>
+                                            {% endif %}
+
+                                            {% if perms.root_app.change_aspirant %}
+                                            <a href="{% url 'root_app:edit_aspirant' data.id %}" class="btn btn-sm btn-primary">Edit <i class="mdi mdi-pencil"></i> </a>
+                                            {% endif %}
+
+                                            {% if perms.root_app.delete_aspirant %}
+                                            <button class="btn btn-sm btn-danger delete-aspirant"> <i class="mdi mdi-delete"></i> </button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+
+                            {% endfor %}
                         
+                        {% else %}
+                            {% for data in aspirants %}
+                                
+                                <tr id="aspirant{{data.id}}">
+                                    <td> <img src="{{data.passport_picture.url}}" alt=""> </td>
+                                    <td>{{data.full_name}}</td>
+                                    <td>{{data.election.election_name}}</td>
+                                    <td>{{data.position.position_name}}</td>
+                                    <td>
+                                        <input type="hidden" value="{{data.id}}">
+                                        {% csrf_token %}
+
+                                        {% if perms.root_app.view_aspirant %}
+                                            <button class="btn btn-sm btn-info view-asp"><i class="mdi mdi-eye"></i> </button>
+                                        {% endif %}
+
+                                        {% if perms.root_app.change_aspirant %}
+                                        <a href="{% url 'root_app:edit_aspirant' data.id %}" class="btn btn-sm btn-primary">Edit <i class="mdi mdi-pencil"></i> </a>
+                                        {% endif %}
+
+                                        {% if perms.root_app.delete_aspirant %}
+                                        <button class="btn btn-sm btn-danger delete-aspirant"> <i class="mdi mdi-delete"></i> </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+                        {% endif %}
                     </tbody>
                 </table>
             </div>
 
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="view-asp-modal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Aspirant's Detail</h5>
+                </div>
+                <div class="modal-body">
+                    <img src="" alt="" class="mb-3" style="margin: auto; width: 100%;" id="photo">
+                    <table class="table table-striped" id="table-view">
+            
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -91,7 +153,9 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static 'root_app/scripts/delete-aspirant.js' %}"></script>
     <script src="{% static 'root_app/scripts/add-aspirant.js' %}"></script>
+    <script src="{% static 'root_app/scripts/filter-aspirant.js' %}"></script>
+    <script src="{% static 'root_app/scripts/delete-aspirant.js' %}"></script>
+    <script src="{% static 'root_app/scripts/view-aspirant.js' %}"></script>
 {% endblock %}
 

@@ -1,0 +1,80 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Election Results {% endblock %}
+
+{% block header %} Elections Results {% endblock %}
+
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Election Results</h4>
+            <p class="card-description">
+                All election results
+            </p>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Election</th>
+                            <th>Commissioner</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        
+                        {% if perms.root_app.add_election and user.user_type != 'superuser' and not perms.root_app.can_assign_commnissioner_role %}
+
+                            {% for data in user.electoralcommissioner_set.all %}
+                               <tr id="election{{data.election.id}}">
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{data.election.election_name}}</td>
+                                    <td>{{data.election.electoral_comm}}</td>
+                                    <td>
+                                        {% if perms.root_app.view_results %}
+                                            <a href="" class="btn btn-sm btn-primary"> View Results <i class="mdi mdi-eye"></i></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                        {% else %}
+
+                            {% for data in elections %}
+                            <tr id="election{{data.id}}">
+                                <td>{{forloop.counter}}</td>
+                                <td>{{data.election_name}}</td>
+                                <td>{{data.electoral_comm}}</td>
+                                <td>
+
+                                    {% if perms.root_app.view_results %}
+                                        <a href="" class="btn btn-sm btn-primary"> View Results <i class="mdi mdi-eye"></i></a>
+                                    {% endif %}
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/delete-election.js' %}"></script>
+{% endblock %}
+

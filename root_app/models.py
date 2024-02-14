@@ -66,7 +66,11 @@ class Election(models.Model):
         verbose_name_plural = 'Elections'
 
         permissions = [
-            ('can_assign_commnissioner_role', 'Can assign commissioner role')
+            ('can_assign_commnissioner_role', 'Can assign commissioner role'),
+            ('view_results', 'Can view results'),
+            ('view_election_results_list', 'Can view election results list'),
+            ('view_general_report', 'Can view general report'),
+            ('view_detailed_report', 'Can view detailed report'),
         ]
     
     def __str__(self):
@@ -87,6 +91,10 @@ class ElectoralCommissioner(models.Model):
 
     class Meta:
         verbose_name_plural = 'Electoral Commissioner'
+
+        permissions= [
+            ('verify_electorate', 'Can verify electorate')
+        ]
     
     def __str__(self):
         return self.user.full_name
@@ -140,6 +148,10 @@ class Aspirant(models.Model):
     class Meta:
 
         verbose_name_plural = 'Aspirants'
+
+        permissions = [
+            ('can_view_aspirants', 'Can view aspirants')
+        ]
     
     def __str__(self) -> str:
         return self.full_name
@@ -183,4 +195,22 @@ class ElectorateProfile(models.Model):
         ]
     
     def __str__(self):
+        return self.user.full_name
+
+
+
+class VerifiedElectorates(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = 'Verified Electorates'
+
+        permissions = [
+            ('view_verified_electorates', 'Can view verifed electorates'),
+            ('unverify_electorates', 'Can unverify electorates')
+        ]
+
+    
+    def __str__(self) -> str:
         return self.user.full_name

@@ -2,9 +2,9 @@
 
 {% load static %}
 
-{% block title %} Add Aspirant {% endblock %}
+{% block title %} Edit Aspirant {% endblock %}
 
-{% block header %} Add Aspirant {% endblock %}
+{% block header %} Edit Aspirant {% endblock %}
 
 
 {% block content %}
@@ -49,10 +49,10 @@
     
         <div class="card-body">
 
-            <h5 class="card-title">Adding Aspirant</h5>
-            <p class="card-description">Use this form to add new candidate</p>
+            <h5 class="card-title">Edit Aspirant</h5>
+            <p class="card-description">Edit this candidate using this form</p>
             
-            <form action="{% url 'root_app:add_aspirant' %}" id="add-aspirant">
+            <form action="{% url 'root_app:edit_aspirant' aspirant.id %}" id="edit-aspirant">
 
                 {% csrf_token %}
 
@@ -60,7 +60,8 @@
 
                     <div class="col-sm-4 form-group image-cover">
                         <input type="file" class="file-input" accept=".jpg, .jpeg, .png" name="passport_pic" style="display: none;">
-                        <img src="{% static 'root_app/avatar-images/avatar.jpg' %}" id="image" alt="">
+                        <input type="hidden" name="old_image" value="{{aspirant.passport_picture}}">
+                        <img src="{{aspirant.passport_picture.url}}" id="image" alt="">
                         <div class="overlay"></div>
                         <button class="btn btn-outline-info image-button" type="button"><i class="mdi mdi-cloud-upload"></i></button>
                     </div>
@@ -70,17 +71,17 @@
                         <div class="row">
                             <div class="form-group col-sm-6">
                                 <label for="first_name" class="form-label">First name</label>
-                                <input type="text" name="first_name" id="first_name" placeholder="First name" class="form-control">
+                                <input type="text" value="{{aspirant.first_name}}" name="first_name" id="first_name" placeholder="First name" class="form-control">
                             </div>
 
                             <div class="form-group col-sm-6">
                                 <label for="surname" class="form-label">Surname</label>
-                                <input type="text" name="surname" id="surname" placeholder="Surname" class="form-control">
+                                <input type="text" value="{{aspirant.surname}}" name="surname" id="surname" placeholder="Surname" class="form-control">
                             </div>
 
                             <div class="form-group col-sm-6">
                                 <label for="othername" class="form-label">Other name (s)</label>
-                                <input type="text" name="othername" id="othername" placeholder="othername" class="form-control">
+                                <input type="text" value="{{aspirant.othername}}" name="othername" id="othername" placeholder="othername" class="form-control">
                             </div>
 
                             <div class="form-group col-sm-6">
@@ -91,11 +92,19 @@
 
                                     {% if perms.root_app.add_election and user.user_type != 'superuser' and not perms.root_app.can_assign_commnissioner_role %}
                                         {% for data in user.electoralcommissioner_set.all %}
+                                            {% if data.election.id == aspirant.election.id %}
+                                                <option value="{{data.election.id}}" selected>{{data.election.election_name}}</option>
+                                            {% else %}
                                                 <option value="{{data.election.id}}">{{data.election.election_name}}</option>
+                                            {% endif %}
                                         {% endfor %}
                                     {% else %}
                                         {% for data in elections %}
+                                            {% if data.id == aspirant.election.id %}
+                                                <option value="{{data.id}}" selected>{{data.election_name}}</option>
+                                            {% else %}
                                                 <option value="{{data.id}}">{{data.election_name}}</option>
+                                            {% endif %}
                                         {% endfor %}
                                     {% endif %}
                                 </select>
@@ -106,6 +115,14 @@
 
                                 <select name="position" id="position" class="form-control">
                                     <option value="">--Choose Position--</option>
+
+                                    {% for data in aspirant.election.position_set.all %}
+                                        {% if data.id == aspirant.position.id %}
+                                            <option value="{{data.id}}" selected>{{data.position_name}}</option>
+                                        {% else %}
+                                            <option value="{{data.id}}">{{data.position_name}}</option>
+                                        {% endif %}
+                                    {% endfor %}
                                 </select>
                             </div>
 
@@ -114,6 +131,10 @@
 
                                 <select name="ballot_number" id="filter_ballotnumber" class="form-control">
                                     <option value="">--Ballot Number--</option>
+                                    <option value="{{aspirant.ballot_number}}" selected>{{aspirant.ballot_number}}</option>
+                                    {% for data in ballot_numbers %}
+                                        <option value="{{data}}">{{data}}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
 
@@ -136,5 +157,5 @@
 
 {% block scripts %}
     <script src="{% static 'root_app/scripts/image-selection.js' %}"></script>
-    <script src="{% static 'root_app/scripts/add-aspirant.js' %}"></script>
+    <script src="{% static 'root_app/scripts/edit-aspirant.js' %}"></script>
 {% endblock %}

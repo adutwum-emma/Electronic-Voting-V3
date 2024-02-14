@@ -1,12 +1,12 @@
-$(document).on('submit', '#add-aspirant', function(e){
+$(document).on('submit', '#edit-aspirant', function(e){
 
     e.preventDefault();
 
-    let data = new FormData($("#add-aspirant").get(0))
+    let data = new FormData($("#edit-aspirant").get(0))
 
     $.ajax({
 
-        url: $('#add-aspirant').prop('action'),
+        url: $('#edit-aspirant').prop('action'),
         type: 'post',
         contentType: false,
         processData: false,
@@ -17,7 +17,7 @@ $(document).on('submit', '#add-aspirant', function(e){
                 `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                 <span>Saving...</span>`
             ).prop('disabled', true)
-            $('#add-aspirant').find('input[type=text], select').prop('disabled', true)
+            $('#edit-aspirant').find('input[type=text], select').prop('disabled', true)
         },
 
         success: function(response){
@@ -26,18 +26,6 @@ $(document).on('submit', '#add-aspirant', function(e){
 
                 successValidator(response.message, "Success")
 
-                $("#add-aspirant")[0].reset()
-
-                $('#image').prop('src', window.thumbnail)
-
-                $("#filter_ballotnumber").empty()
-
-                $('#position').empty()
-
-                $('#position').html(
-                    `<option>Choose Position</option>`
-                )
-
             }
             else{
 
@@ -45,14 +33,14 @@ $(document).on('submit', '#add-aspirant', function(e){
             }
 
             $('.asp-button').text("SAVE").prop('disabled', false)
-            $('#add-aspirant').find('input[type=text], select').prop('disabled', false)
+            $('#edit-aspirant').find('input[type=text], select').prop('disabled', false)
 
         },
 
         error: function(){
             errorValidator("Something went wrong, try again", "Error")
             $('.asp-button').text("SAVE").prop('disabled', false)
-            $('#add-aspirant').find('input[type=text], select').prop('disabled', false)
+            $('#edit-aspirant').find('input[type=text], select').prop('disabled', false)
         }
 
     })
@@ -120,7 +108,7 @@ $('#election').change(function(){
             $('#position').empty()
 
             $('#position').html(
-                `<option value="">Choose Position</option>`
+                `<option value=>Choose Position</option>`
             )
 
             for (var data in response.data){

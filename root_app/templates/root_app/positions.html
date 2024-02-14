@@ -67,7 +67,7 @@
                         {% else %}
 
                             {% for data in positions %}
-                                <tr id="hall{{data.id}}">
+                                <tr id="post{{data.id}}">
                                     <td>{{forloop.counter}}</td>
                                     <td>{{data.position_name}}</td>
                                     <td>{{data.election.election_name}}</td>
@@ -99,7 +99,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static 'root_app/scripts/delete-hall.js' %}"></script>
+    <script src="{% static 'root_app/scripts/delete-position.js' %}"></script>
     <script src="{% static 'root_app/scripts/position-filter.js' %}"></script>
 {% endblock %}
 

@@ -1664,6 +1664,26 @@ def positions(request):
     return render(request, 'root_app/positions.html', context)
 
 
+@login_required(login_url='authentication_app:login')
+@permission_required('authentication_app.delete_position', login_url='root_app:permissible_page')
+def delete_position(request):
+
+    try:
+        position_id = request.POST['position_id']
+
+        position = Position.objects.get(id=position_id)
+        position.delete()
+
+        return JsonResponse({'code':200, 'message':'Position deleted successfully'})
+    
+    except User.DoesNotExist:
+        return JsonResponse({'code':400, 'message':'Position id or does not exist'})
+    
+    except Exception:
+        return JsonResponse({'code':400, 'message':'Something went wrong, try again'})
+
+
+
 def position_filter(request):
 
     try:
@@ -1765,6 +1785,8 @@ def add_aspirant(request):
 
         return render(request, 'root_app/add_aspirant.html', context)
 
+
+@login_required(login_url='authentication_app:login')
 def filter_ballotnumber(request):
 
     try:
@@ -1793,7 +1815,7 @@ def filter_ballotnumber(request):
 
 
 @login_required(login_url='authentication_app:login')
-@permission_required('root_app.view_aspirant', login_url='root_app:permissible_page')
+@permission_required('root_app.can_view_aspirants', login_url='root_app:permissible_page')
 def aspirants(request):
 
     aspirants = Aspirant.objects.all()
@@ -1806,3 +1828,252 @@ def aspirants(request):
     }
 
     return render(request, 'root_app/aspirants.html', context)
+
+
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.change_aspirant', login_url='root_app:permissible_page')
+def edit_aspirant(request, aspirant_id):
+
+    if request.method == "POST":
+        
+        first_name = request.POST['first_name']
+        surname = request.POST['surname']
+        other_name =request.POST['othername']
+        election_id = request.POST['election']
+        position_id = request.POST['position']
+        ballot_number = request.POST['ballot_number']
+        old_image = request.POST['old_image']
+
+        try:
+            image = request.FILES['passport_pic']
+        
+        except Exception:
+            image = old_image
+
+        aspirant = Aspirant.objects.get(id=aspirant_id)
+        
+        if first_name == '':
+            return JsonResponse({'code':400, 'message':'First name is required'})
+        
+        elif surname == '':
+            return JsonResponse({'code':400, 'message':'Surname is required'})
+        
+        elif election_id == '':
+            return JsonResponse({'code':400, 'message':'Choose a specific election for this cadidate'})
+        
+        elif position_id == '':
+            return JsonResponse({'code':400, 'message':'Choose a position for this candidate'})
+        
+        elif ballot_number == '':
+            return JsonResponse({'code':400, 'message':'Select a ballot number for candidate'})
+
+        elif Aspirant.objects.filter(position=Position.objects.get(id=position_id), ballot_number=ballot_number).exists() and aspirant.ballot_number != int(ballot_number):
+            return JsonResponse({'code':400, 'message':'Ballot number for the selected position is already taken'})
+
+        if ballot_number == '':
+            return JsonResponse({'code':400, 'message':'Select a ballot number for candidate'})
+
+        
+        aspirant.passport_picture=image
+        aspirant.first_name=first_name
+        aspirant.surname=surname
+        aspirant.other_name=other_name
+        aspirant.election=Election.objects.get(id=election_id)
+        aspirant.position=Position.objects.get(id=position_id)
+        aspirant.ballot_number=ballot_number
+        aspirant.save()
+
+        return JsonResponse({"code":200, 'message':'Aspirant updated successfully'})
+
+    else:
+
+        elections = Election.objects.all()
+
+        try:
+
+            aspirant = Aspirant.objects.get(id=aspirant_id)
+        
+        except Aspirant.DoesNotExist:
+            return render(request, 'root_app/error-404.html')
+        
+        except ValueError:
+            return render(request, 'root_app/error-404.html')
+
+
+        asp = Aspirant.objects.filter(position=aspirant.position)
+
+        numbers = [data.ballot_number for data in asp]
+
+        available_number = []
+
+        for posts in range(1, aspirant.position.number_of_asp + 1):
+            if posts in numbers:
+                continue
+            else:
+                available_number.append(posts)
+
+        context = {
+            'elections':elections,
+            'aspirant':aspirant,
+            'ballot_numbers':available_number
+        }
+
+        return render(request, 'root_app/edit_aspirant.html', context)
+
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.delete_aspirant', login_url='root_app:permissible_page')
+def delete_aspirant(request):
+    try:
+        aspirant_id = request.POST['aspirant_id']
+
+        aspirant = Aspirant.objects.get(id=aspirant_id)
+        aspirant.delete()
+
+        return JsonResponse({'code':200, 'message':'Aspirant deleted successfully'})
+    
+    except User.DoesNotExist:
+        return JsonResponse({'code':400, 'message':'Aspirant id or does not exist'})
+    
+    except Exception:
+        return JsonResponse({'code':400, 'message':'Something went wrong, try again'})
+
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.view_aspirant', login_url='root_app:permissible_page')
+def view_aspirant(request):
+
+    try:
+        aspirant_id = request.POST['aspirant_id']
+
+        aspirant = Aspirant.objects.get(id=aspirant_id)
+
+        context = {
+            'photo': aspirant.passport_picture.url,
+            'full_name':aspirant.full_name,
+            'election':aspirant.election.election_name,
+            'position':aspirant.position.position_name,
+            'ballot_number':aspirant.ballot_number,
+            'date_added':f'{aspirant.time_stamp.date()} at {aspirant.time_stamp.time()}',
+        }
+
+        return JsonResponse(context)
+    
+    except Exception:
+        return JsonResponse({})
+
+
+@login_required(login_url='authentication_app:login')
+def filter_aspirant(request):
+
+    election_id = request.POST['election']
+    position_id = request.POST['position']
+
+    try:
+
+        if election_id != '' and  position_id == '':
+
+            aspirants = Aspirant.objects.filter(election=Election.objects.get(id=election_id))
+        
+        elif position_id != '':
+
+            aspirants = Aspirant.objects.filter(position=Position.objects.get(id=position_id))
+
+        else:
+
+            aspirants = Aspirant.objects.all()
+
+        filtered_asps = []
+        
+        if request.user.has_perm('root_app.add_election') and request.user.user_type != 'superuser' and not request.user.has_perm('root_app.can_assign_commnissioner_role'):
+
+
+            for data in aspirants:
+
+                if data.election.electoralcommissioner.user.id == request.user.id:
+                    
+                    detail = {
+                        'id':data.id,
+                        'full_name':data.full_name,
+                        'election': data.election.election_name,
+                        'position':data.position.position_name,
+                        'ballot_number':data.ballot_number,
+                        'photo':data.passport_picture.url,
+                        'url': reverse('root_app:edit_aspirant', args=[data.id]),
+                        'can_edit':False,
+                        'can_view':False,
+                        'can_delete':False
+                    }
+
+
+                    if request.user.has_perm('root_app.change_aspirant'):
+                        detail['can_edit'] = True
+
+                    if request.user.has_perm('root_app.view_aspirant'):
+                        detail['can_view'] = True
+
+                    if request.user.has_perm('root_app.delete_aspirant'):
+                        detail['can_delete'] = True 
+
+                    filtered_asps.append(
+                        detail
+                    ) 
+                
+        else:
+
+            for data in aspirants:
+                detail = {
+                    'id':data.id,
+                    'full_name':data.full_name,
+                    'election': data.election.election_name,
+                    'position':data.position.position_name,
+                    'ballot_number':data.ballot_number,
+                    'photo':data.passport_picture.url,
+                    'url': reverse('root_app:edit_aspirant', args=[data.id]),
+                    'can_edit':False,
+                    'can_view':False,
+                    'can_delete':False
+                }
+                
+                if request.user.has_perm('root_app.change_aspirant'):
+                    detail['can_edit'] = True
+
+                if request.user.has_perm('root_app.view_aspirant'):
+                    detail['can_view'] = True
+
+                if request.user.has_perm('root_app.delete_aspirant'):
+                    detail['can_delete'] = True
+                
+                filtered_asps.append(
+                    detail
+                )
+
+        return JsonResponse({'data':filtered_asps})
+    
+    except Aspirant.DoesNotExist:
+
+        return JsonResponse({})
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.view_election_results_list', login_url='root_app:permissible_page')
+def election_results(request):
+
+    elections = Election.objects.all()     
+
+    context = {
+        'elections':elections
+    }
+
+    return render(request, 'root_app/election_results.html', context)
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.verify_electorate', login_url='root_app:permissible_page')
+def verification(request):
+
+    return render(request, 'root_app/verification_form.html')
