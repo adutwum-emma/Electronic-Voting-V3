@@ -199,9 +199,10 @@ class ElectorateProfile(models.Model):
 
 
 
-class VerifiedElectorates(models.Model):
+class VerifiedElectorate(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    verified_by = models.ForeignKey(User, related_name="VerifiedVoters", on_delete=models.CASCADE)
 
     class Meta:
         verbose_name_plural = 'Verified Electorates'

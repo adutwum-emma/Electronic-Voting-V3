@@ -32,7 +32,7 @@ def login(request):
             elif user.user_type == 'user':
                 request.session['member_id'] = user.id
                 auth.login(request, user)
-                return JsonResponse({'code':200, 'url':''})
+                return JsonResponse({'code':200, 'url':reverse('root_app:dashboard')})
 
         else:
             return JsonResponse({'code':400, 'message':'Invalid username or password, try again.'})

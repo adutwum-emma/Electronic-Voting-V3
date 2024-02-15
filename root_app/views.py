@@ -10,7 +10,7 @@ from root_app.models import (Programme, YearClass,
                              Election, ElectoralCommissioner, 
                              AllowedPollingStation, Programme,
                              Hall, PollingStation, ElectorateProfile, 
-                             Position, Aspirant)
+                             Position, Aspirant, VerifiedElectorate)
 from openpyxl import load_workbook
 from django.urls import reverse
 
@@ -2076,4 +2076,49 @@ def election_results(request):
 @permission_required('root_app.verify_electorate', login_url='root_app:permissible_page')
 def verification(request):
 
-    return render(request, 'root_app/verification_form.html')
+    if request.method == 'POST':
+        username = request.POST['username']
+        election = request.POST['election']
+
+        if election == '':
+            return JsonResponse({'code':400, 'message':'Select Election'})
+            
+        elif username == '':
+            return JsonResponse({'code':400, 'message':'Enter a username to verify'})
+
+        if User.objects.filter(username=username).exists() and User.objects.get(username=username).user_type == 'user':
+
+            if VerifiedElectorate.objects.filter(user=User.objects.get(username=username), election=Election.objects.get(id=election)).exists():
+                return JsonResponse({'code':400, 'message':'User has already been verified'})
+            
+            password = generate_password(10)
+
+            user = User.objects.get(username=username)
+            user.set_password(password)
+            user.save()
+
+            VerifiedElectorate.objects.create(
+                user=user,
+                election=Election.objects.get(id=election),
+                verified_by=request.user
+            )
+
+            context = {
+                'full_name':user.full_name,
+                'year_class':user.electorateprofile.year_class.class_name,
+                'password':password
+            }
+
+            return JsonResponse({'code':200, 'message':'Verified', 'user_detail':context})
+        else:
+
+            return JsonResponse({'code':400, 'message':'User does not exist or does not exist as a voter'})
+
+    else:
+        elections = Election.objects.all()     
+
+        context = {
+            'elections':elections
+        }
+
+        return render(request, 'root_app/verification_form.html', context)
