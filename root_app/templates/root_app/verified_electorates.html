@@ -1,0 +1,66 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Verified Electorates {% endblock %}
+
+{% block header %} Verified Electorates {% endblock %}
+
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title"> Verified Electorates</h4>
+            <p class="card-description">
+                All verified electorates
+            </p>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Index number</th>
+                            <th>Election</th>
+                            <th>Verified by</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        {% for data in verified_electorates %}
+                        <tr id="electorate{{data.id}}">
+                            <td>{{forloop.counter}}</td>
+                            <td>{{data.user.full_name}}</td>
+                            <td>{{data.user.username}}</td>
+                            <td>{{data.election.election_name}}</td>
+                            <td>{{data.verified_by.full_name}}</td>
+                            <td>
+                                <input type="hidden" value="{{data.id}}">
+                                {% csrf_token %}
+
+                                {% if perms.root_app.unverify_electorates %}
+                                    <button class="btn btn-sm btn-danger unverify-electorate"> Unverify <i class="mdi mdi-close"></i></button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/unverify-electorate.js' %}"></script>
+{% endblock %}
+

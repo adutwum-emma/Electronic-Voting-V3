@@ -9,6 +9,26 @@
 
 <div class="content-wrapper">
 
+  {% if perms.authentication_app.view_dashboard %}
+
+    <div class="row">
+      <div class="col-sm-12 grid-margin stretch-card">
+        <select name="" id="" class="form-control">
+            <option value="">------------------Select Election--------------------</option>
+
+            {% if perms.root_app.add_election and user.user_type != 'superuser' and not perms.root_app.can_assign_commnissioner_role %}
+                {% for data in user.electoralcommissioner_set.all %}
+                        <option value="{{data.election.id}}">{{data.election.election_name}}</option>
+                {% endfor %}
+            {% else %}
+                {% for data in elections %}
+                    <option value="{{data.id}}">{{data.election_name}}</option>
+                {% endfor %}
+            {% endif %}
+        </select>
+      </div>
+    </div>
+
     <div class="row">
       <div class="col-md-4 grid-margin stretch-card">
         <div class="card">
@@ -16,7 +36,7 @@
             <div class="d-flex align-items-center justify-content-between justify-content-md-center justify-content-xl-between flex-wrap mb-4">
               <div>
                 <p class="mb-2 text-md-center text-lg-left">Total Electorates</p>
-                <h1 class="mb-0">8742</h1>
+                <h1 class="mb-0">{{electorates_total}}</h1>
               </div>
               <i class="typcn typcn-user icon-xl text-secondary"></i>
             </div>
@@ -61,116 +81,38 @@
             <table class="table table-striped project-orders-table">
               <thead>
                 <tr>
-                  <th class="ml-5">ID</th>
-                  <th>Project name</th>
-                  <th>Customer</th>
-                  <th>Deadline</th>
-                  <th>Payouts	</th>
-                  <th>Traffic</th>
+                  <th class="ml-5">Username</th>
+                  <th>Full name</th>
+                  <th>Date added</th>
+                  <th>Last login</th>
+                  <th>User type</th>
+                  <th>Email</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
+                {% for data in users %}
                 <tr>
-                  <td>#D1</td>
-                  <td>Consectetur adipisicing elit </td>
-                  <td>Beulah Cummings</td>
-                  <td>03 Jan 2019</td>
-                  <td>$ 5235</td>
-                  <td>1.3K</td>
+                  <td>{{data.username}}</td>
+                  <td>{{data.full_name}}</td>
+                  <td>{{data.date_added}}</td>
+                  <td>{{data.last_login}}</td>
+                  <td>{{data.user_type}}</td>
+                  <td title="{{data.email}}">{{data.email|truncatechars:5}}</td>
                   <td>
                     <div class="d-flex align-items-center">
-                      <button type="button" class="btn btn-success btn-sm btn-icon-text mr-3">
+                      <a href="{% url 'root_app:edit_user' data.id %}" class="btn btn-success btn-sm btn-icon-text mr-3">
                         Edit
                         <i class="typcn typcn-edit btn-icon-append"></i>                          
-                      </button>
-                      <button type="button" class="btn btn-danger btn-sm btn-icon-text">
-                        Delete
-                        <i class="typcn typcn-delete-outline btn-icon-append"></i>                          
-                      </button>
+                      </a>
+                      <a href="{% url 'root_app:view_user' data.id %}" class="btn btn-info btn-sm btn-icon-text">
+                        View
+                        <i class="mdi mdi-eye"></i>                          
+                      </a>
                     </div>
                   </td>
                 </tr>
-                <tr>
-                  <td>#D2</td>
-                  <td>Correlation natural resources silo</td>
-                  <td>Mitchel Dunford</td>
-                  <td>09 Oct 2019</td>
-                  <td>$ 3233</td>
-                  <td>5.4K</td>
-                  <td>
-                    <div class="d-flex align-items-center">
-                      <button type="button" class="btn btn-success btn-sm btn-icon-text mr-3">
-                        Edit
-                        <i class="typcn typcn-edit btn-icon-append"></i>                          
-                      </button>
-                      <button type="button" class="btn btn-danger btn-sm btn-icon-text">
-                        Delete
-                        <i class="typcn typcn-delete-outline btn-icon-append"></i>                          
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>#D3</td>
-                  <td>social capital compassion social</td>
-                  <td>Pei Canaday</td>
-                  <td>18 Jun 2019</td>
-                  <td>$ 4311</td>
-                  <td>2.1K</td>
-                  <td>
-                    <div class="d-flex align-items-center">
-                      <button type="button" class="btn btn-success btn-sm btn-icon-text mr-3">
-                        Edit
-                        <i class="typcn typcn-edit btn-icon-append"></i>                          
-                      </button>
-                      <button type="button" class="btn btn-danger btn-sm btn-icon-text">
-                        Delete
-                        <i class="typcn typcn-delete-outline btn-icon-append"></i>                          
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>#D4</td>
-                  <td>empower communities thought</td>
-                  <td>Gaynell Sharpton</td>
-                  <td>23 Mar 2019</td>
-                  <td>$ 7743</td>
-                  <td>2.7K</td>
-                  <td>
-                    <div class="d-flex align-items-center">
-                      <button type="button" class="btn btn-success btn-sm btn-icon-text mr-3">
-                        Edit
-                        <i class="typcn typcn-edit btn-icon-append"></i>                          
-                      </button>
-                      <button type="button" class="btn btn-danger btn-sm btn-icon-text">
-                        Delete
-                        <i class="typcn typcn-delete-outline btn-icon-append"></i>                          
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>#D5</td>
-                  <td> Targeted effective; mobilize </td>
-                  <td>Audrie Midyett</td>
-                  <td>22 Aug 2019</td>
-                  <td>$ 2455</td>
-                  <td>1.2K</td>
-                  <td>
-                    <div class="d-flex align-items-center">
-                      <button type="button" class="btn btn-success btn-sm btn-icon-text mr-3">
-                        Edit
-                        <i class="typcn typcn-edit btn-icon-append"></i>                          
-                      </button>
-                      <button type="button" class="btn btn-danger btn-sm btn-icon-text">
-                        Delete
-                        <i class="typcn typcn-delete-outline btn-icon-append"></i>                          
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
@@ -178,6 +120,9 @@
       </div>
     </div>
 
+  {% endif %}
+
   </div>
+
 
 {% endblock %}

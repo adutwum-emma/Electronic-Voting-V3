@@ -18,7 +18,7 @@
 
 
             <div class="row mt-3">
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <span class="small">Permissions</span>
                     <form action="{% url 'root_app:search_permissions' %}" id="search-form">
                         {% csrf_token %}
@@ -30,10 +30,10 @@
                         {% endfor %}
                     </select>
 
-                    <p class="card-description mt-3">Pres <span class="text-danger">CTRL+ A</span> to select all</p>
+                    <p class="card-description mt-3">Press <span class="text-danger">CTRL+ A</span> to select all</p>
                 </div>
 
-                <div class="col-md-4 text-center">
+                <div class="col-md-2 text-center">
                     <div class="mt-3">
                         <button class="btn btn-primary btn-sm mt-3" id="add-permission"><i class="mdi mdi-arrow-right-bold-circle-outline"></i></button>
                     </div>
@@ -43,7 +43,7 @@
                     </div>
                 </div>
         
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <span class="small">Group Permissions</span>
                     <form action="{% url 'root_app:group_permissions' group.id %}" id="select-form">
                         {% csrf_token %}

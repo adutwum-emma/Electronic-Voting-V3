@@ -32,7 +32,39 @@ def is_superuser(user):
 @login_required(login_url='authentication_app:login')
 def dashboard(request):
 
-    return render(request, 'root_app/dashboard.html')
+    electorates = ElectorateProfile.objects.all().count()
+
+    users = User.objects.all().order_by('time_stamp')[:5]
+    
+    filtered_users = []
+
+    for data in users:
+        if data.user_type == 'superuser' or data.user_type == 'staff':
+
+            filtered_users.append(
+                {
+                    'username':data.username,
+                    'full_name':data.full_name,
+                    'date_added':data.time_stamp,
+                    'last_login':data.last_login,
+                    'user_type':data.user_type,
+                    'email':data.email,
+                    'id':data.id,
+                }
+            )
+
+    elections = Election.objects.all()     
+
+    context = {
+        'electorates_total':electorates,
+        'elections':elections
+    }
+
+    context.update(
+        {'users':filtered_users}
+    )
+
+    return render(request, 'root_app/dashboard.html', context)
 
 
 @login_required(login_url='athentication_app:login')
@@ -2122,3 +2154,33 @@ def verification(request):
         }
 
         return render(request, 'root_app/verification_form.html', context)
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.view_verifiedelectorates', login_url='root_app:permissible_page')
+def verified_electorates(request):
+
+    v_electorates = VerifiedElectorate.objects.all()
+
+
+    context = {
+        'verified_electorates': v_electorates
+    }
+
+    return render(request, 'root_app/verified_electorates.html', context)
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.unverify_electorates', login_url='root_app:permissible_page')
+def unverify_electorate(request):
+
+    try:
+        uv_id = request.POST['uv_id']
+
+        VerifiedElectorate.objects.get(id=uv_id).delete()
+
+        return JsonResponse({'code':200, 'message':'Electorate unverified successfully'})
+    
+    except Exception:
+
+        return JsonResponse({'code':400, 'message':'Something went wrong, please try again'})

@@ -470,17 +470,21 @@
               <i class="menu-arrow"></i>
             </a>
 
+            {% if perms.root_app.verify_electorate or perms.root_app.view_verifiedelectorates  %}
+
             <div class="collapse" id="verification">
               <ul class="nav flex-column sub-menu">
                 {% if perms.root_app.verify_electorate %}
                   <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:verification' %}"> Verify Electorate </a></li>
                 {% endif %}
 
-                {% if perms.root_app.view_verified_electorates %}
-                  <li class="nav-item"> <a class="nav-link" href=""> Verified Electorates </a></li>
+                {% if perms.root_app.view_verifiedelectorates %}
+                  <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:verified_electorates' %}"> Verified Electorates </a></li>
                 {% endif %}
               </ul>
             </div>
+
+            {% endif %}
           </li>
           {% endif %}
         </ul>

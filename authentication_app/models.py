@@ -104,7 +104,8 @@ class User(AbstractUser):
         permissions = [
             ('view_users', 'Can view users'),
             ('assign_group', 'Can assign group to users'),
-            ('assign_permission', 'Can assign permission to users')
+            ('assign_permission', 'Can assign permission to users'),
+            ('view_dashboard', 'Can view dashboard')
         ]
 
         verbose_name_plural = 'Users'

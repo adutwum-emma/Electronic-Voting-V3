@@ -1,3 +1,9 @@
+$(document).on('submit', '#search-form', function(e){
+
+    e.preventDefault();
+
+})
+
 $('#search-bar').keyup(function(){
 
     $('#permissions').empty()

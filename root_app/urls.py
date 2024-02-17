@@ -59,4 +59,6 @@ urlpatterns = [
     path('filter_aspirant/', views.filter_aspirant, name='filter_aspirant'),     
     path('election_results/', views.election_results, name='election_results'),     
     path('verification/', views.verification, name='verification'),     
+    path('verified_electorates/', views.verified_electorates, name='verified_electorates'),     
+    path('unverify_electorate/', views.unverify_electorate, name='unverify_electorate'),     
 ]
