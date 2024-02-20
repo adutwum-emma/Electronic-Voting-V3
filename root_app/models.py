@@ -65,12 +65,15 @@ class Election(models.Model):
     class Meta:
         verbose_name_plural = 'Elections'
 
+        ordering = ['-time_stamp']
+
         permissions = [
             ('can_assign_commnissioner_role', 'Can assign commissioner role'),
             ('view_results', 'Can view results'),
             ('view_election_results_list', 'Can view election results list'),
             ('view_general_report', 'Can view general report'),
             ('view_detailed_report', 'Can view detailed report'),
+            ('set_currentelection', 'Can set current election')
         ]
     
     def __str__(self):
@@ -95,9 +98,22 @@ class ElectoralCommissioner(models.Model):
         permissions= [
             ('verify_electorate', 'Can verify electorate')
         ]
+
+        ordering = ['election']
     
     def __str__(self):
         return self.user.full_name
+
+class CurrentElection(models.Model):
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    set_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    time_stamp = models.DateField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return self.election.election_name
+    
+    class Meta:
+        verbose_name_plural = 'Current Elections'
 
 class AllowedPollingStation(models.Model):
 
@@ -148,6 +164,8 @@ class Aspirant(models.Model):
     class Meta:
 
         verbose_name_plural = 'Aspirants'
+
+        ordering = ['ballot_number']
 
         permissions = [
             ('can_view_aspirants', 'Can view aspirants')

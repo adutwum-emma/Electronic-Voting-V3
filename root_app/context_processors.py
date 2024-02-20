@@ -1,4 +1,5 @@
 from datetime import datetime
+from root_app.models import CurrentElection
 
 def date_today(request):
 
@@ -6,4 +7,12 @@ def date_today(request):
 
     return {
         'today':today
+    }
+
+def current_election(request):
+
+    election = CurrentElection.objects.all().last()
+
+    return {
+        'current_election':election
     }

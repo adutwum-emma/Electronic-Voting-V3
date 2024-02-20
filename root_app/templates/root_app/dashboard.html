@@ -1,5 +1,7 @@
 {% extends 'root_app/base.html' %}
 
+{% load static %}
+
 {% block title %} Dashboard {% endblock %}
 
 {% block header %} Dashboard {% endblock %}
@@ -13,16 +15,25 @@
 
     <div class="row">
       <div class="col-sm-12 grid-margin stretch-card">
-        <select name="" id="" class="form-control">
-            <option value="">------------------Select Election--------------------</option>
+
+        {%  csrf_token %}
+
+        <select id="election" class="form-control">
+            <option value="">------------------All Elections--------------------</option>
 
             {% if perms.root_app.add_election and user.user_type != 'superuser' and not perms.root_app.can_assign_commnissioner_role %}
                 {% for data in user.electoralcommissioner_set.all %}
+                  {% if forloop.counter == 1 %}
+                        <option value="{{data.election.id}}" selected>{{data.election.election_name}}</option>
+                  {% else %}
                         <option value="{{data.election.id}}">{{data.election.election_name}}</option>
+                  {% endif %}
                 {% endfor %}
             {% else %}
                 {% for data in elections %}
-                    <option value="{{data.id}}">{{data.election_name}}</option>
+         
+                    <option value="{{data.id}}"> {{data.election_name}}</option>
+                  
                 {% endfor %}
             {% endif %}
         </select>
@@ -30,6 +41,22 @@
     </div>
 
     <div class="row">
+
+      <div class="col-md-4 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between justify-content-md-center justify-content-xl-between flex-wrap mb-4">
+              <div>
+                <p class="mb-2 text-md-center text-lg-left">Total Elections</p>
+                <h1 class="mb-0">{{total_elections}}</h1>
+              </div>
+              <i class="mdi mdi-poll icon-xl text-secondary"></i>
+            </div>
+            <canvas id="balance-chart" height="80"></canvas>
+          </div>
+        </div>
+      </div>
+
       <div class="col-md-4 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
@@ -44,13 +71,14 @@
           </div>
         </div>
       </div>
+      
       <div class="col-md-4 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between justify-content-md-center justify-content-xl-between flex-wrap mb-4">
               <div>
                 <p class="mb-2 text-md-center text-lg-left">Total Aspirants</p>
-                <h1 class="mb-0">47,840</h1>
+                <h1 class="mb-0" id="t-asp-var">{{total_aspirants}}</h1>
               </div>
               <i class="typcn typcn-chart-pie icon-xl text-secondary"></i>
             </div>
@@ -58,21 +86,10 @@
           </div>
         </div>
       </div>
-      <div class="col-md-4 grid-margin stretch-card">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex align-items-center justify-content-between justify-content-md-center justify-content-xl-between flex-wrap mb-4">
-              <div>
-                <p class="mb-2 text-md-center text-lg-left">Total Elections</p>
-                <h1 class="mb-0">$7,243</h1>
-              </div>
-              <i class="typcn typcn-clipboard icon-xl text-secondary"></i>
-            </div>
-            <canvas id="balance-chart" height="80"></canvas>
-          </div>
-        </div>
-      </div>
+
     </div>
+
+    {% if perms.authentication_app.view_dashboard_users %}
 
     <div class="row">
       <div class="col-md-12">
@@ -101,14 +118,19 @@
                   <td title="{{data.email}}">{{data.email|truncatechars:5}}</td>
                   <td>
                     <div class="d-flex align-items-center">
+                      {% if perms.root_app.change_user %}
                       <a href="{% url 'root_app:edit_user' data.id %}" class="btn btn-success btn-sm btn-icon-text mr-3">
                         Edit
                         <i class="typcn typcn-edit btn-icon-append"></i>                          
                       </a>
+                      {% endif %}
+
+                      {% if perms.root_app.view_user %}
                       <a href="{% url 'root_app:view_user' data.id %}" class="btn btn-info btn-sm btn-icon-text">
                         View
                         <i class="mdi mdi-eye"></i>                          
                       </a>
+                      {% endif %}
                     </div>
                   </td>
                 </tr>
@@ -120,9 +142,14 @@
       </div>
     </div>
 
+    {% endif %}
   {% endif %}
 
   </div>
 
+{% endblock %}
 
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/aspirant_total_fil.js' %}"></script>
 {% endblock %}

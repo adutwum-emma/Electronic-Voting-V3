@@ -1,0 +1,65 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Current Election {% endblock %}
+
+{% block header %} Current Election {% endblock %}
+
+
+{% block content %}
+
+    <div class="content-wrapper">
+
+        
+        <div class="card">
+
+            <div class="card-body">
+                <h5 class="card-title">Current Election</h5>
+
+                <form action="{% url 'root_app:set_currentelection' %}" id="current-election">
+
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <select name="election" id="election" class="form-control">
+                                <option value="">---Current Election---</option>
+
+                                {% if perms.root_app.add_election and user.user_type != 'superuser' and not perms.root_app.can_assign_commnissioner_role %}
+                                    {% for data in user.electoralcommissioner_set.all %}
+                                        {% if data.election.id == current_election.election.id %}
+                                            <option value="{{data.election.id}}" selected>{{data.election.election_name}}</option>
+                                        {% else %}
+                                            <option value="{{data.election.id}}">{{data.election.election_name}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    {% for data in elections %}
+                                        {% if data.id == current_election.election.id %}
+                                            <option value="{{data.id}}" selected>{{data.election_name}}</option>
+                                        {% else %}
+                                            <option value="{{data.id}}">{{data.election_name}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+
+                        <div class="col-sm-12 mt-3">
+                            <button type="submit" class="btn btn-primary">SAVE</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        
+
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/current-election.js' %}"></script>
+{% endblock %}

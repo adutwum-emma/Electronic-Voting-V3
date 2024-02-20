@@ -6,6 +6,7 @@ from django.contrib import auth
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+from root_app.models import VerifiedElectorate, Vote, CurrentElection
 
 
 def login(request):
@@ -30,9 +31,19 @@ def login(request):
                 return JsonResponse({'code':200, 'url':reverse('root_app:dashboard')})
             
             elif user.user_type == 'user':
+
+                if CurrentElection.objects.all().last():
+                    current_election = CurrentElection.objects.all().last()
+
+                    if not VerifiedElectorate.objects.filter(user=user, election=current_election.election).exists():
+                        return JsonResponse({'code':400, 'message':'You are not verified'})
+                    
+                    elif Vote.objects.filter(user=user, election=current_election.election):
+                        return JsonResponse({'code':400, 'message':'You have voted already'})
+
                 request.session['member_id'] = user.id
                 auth.login(request, user)
-                return JsonResponse({'code':200, 'url':reverse('root_app:dashboard')})
+                return JsonResponse({'code':200, 'url':reverse('root_app:voting_ballot')})
 
         else:
             return JsonResponse({'code':400, 'message':'Invalid username or password, try again.'})

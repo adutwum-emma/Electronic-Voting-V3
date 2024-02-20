@@ -49,7 +49,7 @@
       <div class="navbar-brand-wrapper d-flex justify-content-center">
         <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
           <a class="navbar-brand brand-logo text-white" href=""><h4><strong>KNMTC</strong></h4></a>
-          <a class="navbar-brand brand-logo-mini text-white" href=""><h4><strong>KNMTC</strong></h4></a>
+          <a class="navbar-brand brand-logo-mini text-white" href=""><h4><small>KNMTC</small></h4></a>
           <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
             <span class="typcn typcn-th-menu"></span>
           </button>
@@ -184,8 +184,10 @@
       </div>
     </nav>
     <!-- partial -->
+
+
     <nav class="navbar-breadcrumb col-xl-12 col-12 d-flex flex-row p-0">
-      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+      <!--<div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
         <ul class="navbar-nav navbar-nav-left mr-lg-2">
           <li class="nav-item ml-0">
             <h4 class="mb-0">{% block header %} {% endblock %}</h4>
@@ -194,7 +196,7 @@
         <ul class="navbar-nav navbar-nav-right">
           
         </ul>
-      </div>
+      </div>-->
     </nav>
     <div class="container-fluid page-body-wrapper">
       <!-- partial -->
@@ -203,8 +205,13 @@
         <ul class="nav">
           <li class="nav-item">
             <a class="nav-link" href="{% url 'root_app:dashboard' %}">
-              <i class="typcn typcn-device-desktop menu-icon"></i>
-              <span class="menu-title">Dashboard</span>
+              {% if perms.authentication_app.view_dashboard %}
+                <i class="typcn typcn-device-desktop menu-icon"></i>
+                <span class="menu-title">Dashboard</span>
+              {% else %}
+                <i class="mdi mdi-home menu-icon"></i>
+                <span class="menu-title">Home</span>
+              {% endif %}
             </a>
           </li>
 
@@ -342,7 +349,7 @@
           {% endif %}
 
 
-          {% if perms.root_app.add_election or perms.root.view_election %}
+          {% if perms.root_app.add_election or perms.root.view_election or perms.rootr_app.set_currentelection %}
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#error" aria-expanded="false" aria-controls="error">
               <i class="mdi mdi-poll menu-icon"></i>
@@ -358,6 +365,10 @@
 
                 {% if perms.root_app.view_election %}
                 <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:elections' %}"> Elections </a></li>
+                {% endif %}
+
+                {% if perms.root_app.set_currentelection %}
+                <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:set_currentelection' %}"> Current Election </a></li>
                 {% endif %}
                 
               </ul>
@@ -435,6 +446,31 @@
           </li>
           {% endif %}
 
+          {% if perms.root_app.verify_electorate %}
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#verification" aria-expanded="false" aria-controls="error">
+              <i class="mdi mdi-checkbox-marked-circle menu-icon"></i>
+              <span class="menu-title">Verifaction</span>
+              <i class="menu-arrow"></i>
+            </a>
+
+            {% if perms.root_app.verify_electorate or perms.root_app.view_verifiedelectorates  %}
+
+            <div class="collapse" id="verification">
+              <ul class="nav flex-column sub-menu">
+                {% if perms.root_app.verify_electorate %}
+                  <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:verification' %}"> Verify Electorate </a></li>
+                {% endif %}
+
+                {% if perms.root_app.view_verifiedelectorates %}
+                  <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:verified_electorates' %}"> Verified Electorates </a></li>
+                {% endif %}
+              </ul>
+            </div>
+
+            {% endif %}
+          </li>
+          {% endif %}
 
           {% if perms.root_app.view_election_results_list or perms.root_app.view_general_report or perms.root_app.view_detailed_report %}
 
@@ -460,32 +496,7 @@
               </ul>
             </div>
           </li>
-          {% endif %}
-
-          {% if perms.root_app.verify_electorate %}
-          <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#verification" aria-expanded="false" aria-controls="error">
-              <i class="mdi mdi-checkbox-marked-circle menu-icon"></i>
-              <span class="menu-title">Verifaction</span>
-              <i class="menu-arrow"></i>
-            </a>
-
-            {% if perms.root_app.verify_electorate or perms.root_app.view_verifiedelectorates  %}
-
-            <div class="collapse" id="verification">
-              <ul class="nav flex-column sub-menu">
-                {% if perms.root_app.verify_electorate %}
-                  <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:verification' %}"> Verify Electorate </a></li>
-                {% endif %}
-
-                {% if perms.root_app.view_verifiedelectorates %}
-                  <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:verified_electorates' %}"> Verified Electorates </a></li>
-                {% endif %}
-              </ul>
-            </div>
-
-            {% endif %}
-          </li>
+          
           {% endif %}
         </ul>
       </nav>

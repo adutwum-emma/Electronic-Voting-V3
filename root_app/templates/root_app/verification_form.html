@@ -25,7 +25,11 @@
                                         <option value="">--Select Election--</option>
 
                                         {% for data in elections %}
-                                        <option value="{{data.id}}">{{data.election_name}}</option>
+                                            {% if data.id == current_election.election.id %}
+                                                <option value="{{data.id}}" selected>{{data.election_name}}</option>
+                                            {% else %}
+                                                <option value="{{data.id}}">{{data.election_name}}</option>
+                                            {% endif %}
                                         {% endfor %}
                                     </select>
                                 </div>

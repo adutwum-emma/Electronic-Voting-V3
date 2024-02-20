@@ -10,7 +10,7 @@ from root_app.models import (Programme, YearClass,
                              Election, ElectoralCommissioner, 
                              AllowedPollingStation, Programme,
                              Hall, PollingStation, ElectorateProfile, 
-                             Position, Aspirant, VerifiedElectorate)
+                             Position, Aspirant, VerifiedElectorate, CurrentElection)
 from openpyxl import load_workbook
 from django.urls import reverse
 
@@ -64,7 +64,58 @@ def dashboard(request):
         {'users':filtered_users}
     )
 
+    if request.user.has_perm('root_app.add_election') and request.user.user_type != 'superuser' and not request.user.has_perm('root_app.can_assign_commnissioner_role'):
+        #Counting Elections
+        total_election = request.user.electoralcommissioner_set.count()
+
+        #Counting Aspirants according to current election
+        commisioner = ElectoralCommissioner.objects.filter(user=request.user).first() # Getting the current election by getting the electoral commissioner
+
+        total = Aspirant.objects.filter(election=commisioner.election).count() #Filtering  and counting Aspirants
+
+        context.update(
+            {'total_elections':total_election, 'total_aspirants':total}
+        )
+
+    else:
+        context.update(
+            {'total_aspirants':Aspirant.objects.count(), 'total_elections':Election.objects.count()}
+        )
+    
+
     return render(request, 'root_app/dashboard.html', context)
+
+
+
+def getting_totalaspirants(request):
+
+    election_id = request.POST['election']
+
+    if election_id != '':
+
+        election = Election.objects.get(id=election_id)
+
+        total = Aspirant.objects.filter(election=election).count() #Filtering  and counting Aspirants
+
+        return JsonResponse({'total_aspirants':total})
+
+    else:
+    
+        if request.user.has_perm('root_app.add_election') and request.user.user_type != 'superuser' and not request.user.has_perm('root_app.can_assign_commnissioner_role'):
+
+            total = 0
+
+            commissions = ElectoralCommissioner.objects.filter(user=request.user)
+
+            for data in commissions:
+                total += Aspirant.objects.filter(election=data.election).count()
+            
+            return JsonResponse({'total_aspirants':total})
+            
+        else:
+
+            return JsonResponse({'total_aspirants': Aspirant.objects.count()})
+
 
 
 @login_required(login_url='athentication_app:login')
@@ -2184,3 +2235,57 @@ def unverify_electorate(request):
     except Exception:
 
         return JsonResponse({'code':400, 'message':'Something went wrong, please try again'})
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.set_currentelection', login_url='root_app:permissible_page')
+def set_currentelection(request):
+
+    if request.method == 'POST':
+
+        try:
+
+            election_id = request.POST['election']
+
+            if election_id == '':
+                return JsonResponse({'code':400, 'message':'No election selected'})
+
+            election = Election.objects.get(id=election_id)
+
+            CurrentElection.objects.create(
+                election=election,
+                set_by=request.user
+            )
+
+            return JsonResponse({'code':200, 'message':f'{election.election_name} has been set as the current election'})
+        
+        except Exception as e:
+            return JsonResponse({'code':400, 'message':'Something went wrong, try again!'})
+        
+    else:
+
+        elections = Election.objects.all()     
+
+        context = {
+            'elections':elections
+        }
+
+        return render(request, 'root_app/current_election.html', context)
+
+
+@login_required(login_url='authetication_app:login')
+def voting_ballot(request):
+
+    if request.method == 'POST':
+        pass
+    
+    else:
+
+        election = CurrentElection.objects.all().last()
+
+        current_election = Election.objects.get(id=election.election.id)
+
+        context = {
+            'election':current_election
+        }
+
+        return render(request, 'root_app/voting_ballot.html', context)

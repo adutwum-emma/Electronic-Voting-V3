@@ -61,4 +61,7 @@ urlpatterns = [
     path('verification/', views.verification, name='verification'),     
     path('verified_electorates/', views.verified_electorates, name='verified_electorates'),     
     path('unverify_electorate/', views.unverify_electorate, name='unverify_electorate'),     
+    path('getting_totalaspirants/', views.getting_totalaspirants, name='getting_totalaspirants'),     
+    path('voting_ballot/', views.voting_ballot, name='voting_ballot'),     
+    path('set_currentelection/', views.set_currentelection, name='set_currentelection'),     
 ]

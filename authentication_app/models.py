@@ -105,7 +105,8 @@ class User(AbstractUser):
             ('view_users', 'Can view users'),
             ('assign_group', 'Can assign group to users'),
             ('assign_permission', 'Can assign permission to users'),
-            ('view_dashboard', 'Can view dashboard')
+            ('view_dashboard', 'Can view dashboard'),
+            ('view_dashboard_users', 'Can view dashboard current users on dashboard'),
         ]
 
         verbose_name_plural = 'Users'
