@@ -10,9 +10,10 @@ from root_app.models import (Programme, YearClass,
                              Election, ElectoralCommissioner, 
                              AllowedPollingStation, Programme,
                              Hall, PollingStation, ElectorateProfile, 
-                             Position, Aspirant, VerifiedElectorate, CurrentElection)
+                             Position, Aspirant, VerifiedElectorate, CurrentElection, Vote)
 from openpyxl import load_workbook
 from django.urls import reverse
+from datetime import datetime
 
 def is_superuser(user):
 
@@ -1141,7 +1142,7 @@ def edit_election(request, election_id):
             election.save()
         
         else:
-            election.allow_mutiple_votes=False
+            election.allow_multiple_votes=False
             election.save()
 
         
@@ -1177,6 +1178,7 @@ def edit_election(request, election_id):
                         {
                             'id': data.id,
                             'name': data.name,
+                            'poll_exist':data.is_alreadyallowed,
                             'exist':True
                         }
                     )
@@ -1186,6 +1188,7 @@ def edit_election(request, election_id):
                         {
                             'id': data.id,
                             'name': data.name,
+                            'poll_exist':data.is_alreadyallowed,
                             'exist':False
                         }
                     )
@@ -2161,7 +2164,9 @@ def verification(request):
 
     if request.method == 'POST':
         username = request.POST['username']
-        election = request.POST['election']
+
+        cur_election = CurrentElection.objects.all().last()
+        election = Election.objects.get(id=cur_election.election.id)
 
         if election == '':
             return JsonResponse({'code':400, 'message':'Select Election'})
@@ -2171,7 +2176,7 @@ def verification(request):
 
         if User.objects.filter(username=username).exists() and User.objects.get(username=username).user_type == 'user':
 
-            if VerifiedElectorate.objects.filter(user=User.objects.get(username=username), election=Election.objects.get(id=election)).exists():
+            if VerifiedElectorate.objects.filter(user=User.objects.get(username=username), election=election).exists():
                 return JsonResponse({'code':400, 'message':'User has already been verified'})
             
             password = generate_password(10)
@@ -2182,7 +2187,7 @@ def verification(request):
 
             VerifiedElectorate.objects.create(
                 user=user,
-                election=Election.objects.get(id=election),
+                election=election,
                 verified_by=request.user
             )
 
@@ -2272,7 +2277,7 @@ def set_currentelection(request):
         return render(request, 'root_app/current_election.html', context)
 
 
-@login_required(login_url='authetication_app:login')
+@login_required(login_url='authentication_app:login')
 def voting_ballot(request):
 
     if request.method == 'POST':
@@ -2284,8 +2289,153 @@ def voting_ballot(request):
 
         current_election = Election.objects.get(id=election.election.id)
 
+        has_voted = Vote.objects.filter(election=current_election, user=request.user).exists()
+
+        poll_ids = []
+
+        polling_stations = AllowedPollingStation.objects.filter(election=current_election)
+
+        for data in polling_stations:
+            poll_ids.append(data.polling_station.id)
+
+
         context = {
-            'election':current_election
+            'election':current_election,
         }
 
+        if request.user.electorateprofile.polling_station.id in poll_ids:
+            context.update(
+                {'is_permitted':True}
+            )
+
+        if not current_election.allow_multiple_votes and has_voted:
+            context.update(
+                {'has_voted':True}
+            )
+            
+
         return render(request, 'root_app/voting_ballot.html', context)
+
+def get_selected_aspirants(request):
+
+    aspirants_id = request.POST.getlist('asp_ids[]')
+
+    aspirants = []
+
+    for data in aspirants_id:
+        asp = Aspirant.objects.get(id=data)
+        aspirants.append(
+            {
+                'full_name':asp.full_name,
+                'ballot_number':asp.ballot_number,
+                'passport_picture':asp.passport_picture.url,
+                'position':asp.position.position_name
+            }
+        )
+    
+    return JsonResponse({'data':aspirants})
+
+
+
+@login_required(login_url='authentication_app:login')
+def cast_vote(request):
+
+    election = CurrentElection.objects.all().last()
+
+    current_election = Election.objects.get(id=election.election.id)
+
+    aspirants_id = request.POST.getlist('asp_ids[]')
+
+    has_voted = Vote.objects.filter(election=current_election, user=request.user).exists()
+
+    if not current_election.allow_multiple_votes and has_voted:
+        return JsonResponse({'code':400, 'message':'You have already voted'})
+    elif len(aspirants_id) <= 0:
+        return JsonResponse({'code':400, 'message':'No candidate selected'})
+
+    for data in aspirants_id:
+        Vote.objects.create(
+            aspirant=Aspirant.objects.get(id=data),
+            user=request.user,
+            election=current_election,
+            position=Aspirant.objects.get(id=data).position
+        )
+    
+    return JsonResponse({'code':200, 'message':'Your vote submitted successfully', 'url':reverse('authentication_app:logout')})
+
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.view_results', login_url='root_app:permissible_page')
+def results(request, election_id):
+    try:
+        election = Election.objects.get(id=election_id)
+
+        context = {
+            'election':election
+        }
+        
+        return render(request, 'root_app/results.html', context)
+    
+    except Election.DoesNotExist:
+        return render(request, 'root_app/error-404.html', )
+    
+    except ValueError:
+        return render(request, 'root_app/error-404.html', )
+
+def get_results(request, election_id):
+
+    election = Election.objects.get(id=election_id)
+
+    results_data = []
+
+    #Getting positions with no results
+    for data in election.position_set.all():
+        asp = {
+            'position_name':data.position_name,
+            'results': []
+        }
+
+        #Getting results for each position
+        for ele in data.aspirant_set.all():
+            asp['results'].append(
+                {
+                    'full_name':ele.full_name,
+                    'votes':ele.aspirant_vote_counts,
+                    'percentage':ele.aspirant_vote_percentage
+                }
+            )
+        
+        results_data.append(asp)
+
+    return JsonResponse({'data':results_data})
+
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.print_results', login_url='root_app:permissible_page')
+def print_results(request, election_id):
+
+    try:
+
+        election = Election.objects.get(id=election_id)
+
+        context = {
+            'election':election
+        }
+
+        return render(request, 'root_app/results_print.html', context)
+    
+    except Election.DoesNotExist:
+        return render(request, 'root_app/error-404.html')
+    
+    except ValueError:
+        return render(request, 'root_app/error-404.html')
+
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.view_detailed_report', login_url='root_app:permissible_page')
+def detailed_report(request):
+
+    return render(request, 'root_app/detailed_report.html')

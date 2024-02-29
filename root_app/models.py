@@ -1,5 +1,6 @@
 from django.db import models
 from authentication_app.models import User
+from datetime import datetime
 
 class Programme(models.Model):
 
@@ -43,6 +44,12 @@ class PollingStation(models.Model):
     name = models.CharField(max_length=200)
     location = models.CharField(max_length=200)
 
+    @property
+    def is_alreadyallowed(self):
+        if AllowedPollingStation.objects.filter(polling_station_id=self.id).exists():
+            return True
+        return False
+
     class Meta:
         verbose_name_plural = 'Polling Stations'
 
@@ -80,10 +87,21 @@ class Election(models.Model):
         return self.election_name
     
     @property
+    def is_open(self):
+        s_date = str(self.election_date) + " " + str(self.election_time)
+        e_date = str(self.ending_date) + " " + str(self.ending_time)
+
+        if str(datetime.now()) >= e_date or str(datetime.now()) < s_date or not self.is_active:
+            return False
+        else:
+            return True
+    
+    @property
     def electoral_comm(self):
 
         election = Election.objects.get(id=self.id)
         return election.electoralcommissioner.user.full_name
+            
 
 
 class ElectoralCommissioner(models.Model):
@@ -111,6 +129,7 @@ class CurrentElection(models.Model):
 
     def __str__(self) -> str:
         return self.election.election_name
+
     
     class Meta:
         verbose_name_plural = 'Current Elections'
@@ -141,6 +160,45 @@ class Position(models.Model):
 
     def __str__(self):
         return self.position_name
+    
+    @property
+    def total_vote_count(self):
+
+        current_eleaction = CurrentElection.objects.all().last()
+
+        total = Vote.objects.filter(position=Position.objects.get(id=self.id), election=current_eleaction.election).count()
+
+        return total
+    
+    @property
+    def turnout_percentage(self):
+
+        try:
+
+            current_election = CurrentElection.objects.all().last()
+
+            election = Election.objects.get(id=current_election.election.id)
+
+            total = 0
+
+            for data in election.allowedpollingstation_set.all():
+                total += ElectorateProfile.objects.filter(polling_station=data.polling_station).count()
+
+            # users = User.objects.all()
+
+            # filtered_users = []
+
+            # for data in users:
+            #     if data.user_type == 'user':
+            #         filtered_users.append(data)
+            
+            percentage = (self.total_vote_count / total) * 100
+
+            return round(percentage, 2)
+        
+        except Exception:
+            return ''
+
 
 class Aspirant(models.Model):
 
@@ -173,6 +231,22 @@ class Aspirant(models.Model):
     
     def __str__(self) -> str:
         return self.full_name
+    
+    @property
+    def aspirant_vote_counts(self):
+        total = Vote.objects.filter(aspirant_id=self.id).count()
+
+        return total
+
+    @property
+    def aspirant_vote_percentage(self):
+        try:
+            percentage = (self.aspirant_vote_counts / self.position.total_vote_count) * 100 
+
+            return round(percentage, 2)
+        
+        except Exception:
+            return ''
 
 
 class Vote(models.Model):
@@ -184,7 +258,8 @@ class Vote(models.Model):
 
     class Meta:
         permissions = [
-            ('can_view_result', 'Can View Result')
+            ('can_view_result', 'Can View Result'),
+            ('print_results', 'Can Print Result'),
         ]
 
         verbose_name_plural = 'Votes'

@@ -1,4 +1,6 @@
+$(document).ready(function(){
 
+    
 $('.delete-post').click(function(){
 
     let positionID = $(this).parents('td').children('input[type=hidden]').val()
@@ -82,3 +84,5 @@ function errorValidator(message, title){
     })
 
 }
+
+})

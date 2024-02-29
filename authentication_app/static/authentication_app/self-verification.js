@@ -1,66 +1,50 @@
-
-$(document).ready(function(){
-    let username = localStorage.getItem('username')
-
-    $('#username').val(username)
-})
-
-$(document).on('submit', '#login', function(e){
+$(document).on('submit', '#self-verification', function(e){
 
     e.preventDefault();
 
-    if( $('#username').val() == "" ){
-        errorValidator('Username required', 'Required field')
-    }
-    else if ( $('#password').val() == "" ){
-        errorValidator('Password required', 'Required field')
-    }
-    else{
-        login()
-    }
-
-})
-
-function login(){
-
-    let data = new FormData($('#login').get(0))
+    let data = new FormData($('#self-verification').get(0))
 
     $.ajax({
-        
-        url: $('#login').prop('action'),
+
+        url: $('#self-verification').prop('action'),
         type: 'post',
         contentType: false,
         processData: false,
         data: data,
 
         beforeSend: function(){
-            $('#login-button').html(
+            $('#self-verification').find('button').html(
                 `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                <span>Please wait..</span>`
+                <span>Sending code...</span>`
             ).prop('disabled', true)
         },
 
         success: function(response){
+            if(response.code ==200){
+                localStorage.setItem('username', $('#username').val())
+                successValidator(response.message, 'Success')
 
-            if (response.code == 200){
-                location.href = response.url
+                setTimeout(function(){
+                    location.href = response.url
+                }, 2000)
             }
             else{
                 errorValidator(response.message, 'Unsuccess')
-
-                $('#login-button').text('SIGN IN').prop('disabled', false)
             }
 
+            $('#self-verification').find('button').text("SEND CODE").prop('disabled', false)
         },
 
         error: function(){
-            errorValidator('Something went wrong', 'Error')
-            $('#login-button').text('SIGN IN').prop('disabled', false)
+            errorValidator("Something went wrong, try again", "Error")
+
+            $('#self-verification').find('button').text("SEND CODE").prop('disabled', false)
+
         }
 
     })
 
-}
+})
 
 
 function successValidator(message, title){

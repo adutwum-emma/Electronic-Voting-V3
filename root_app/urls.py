@@ -64,4 +64,10 @@ urlpatterns = [
     path('getting_totalaspirants/', views.getting_totalaspirants, name='getting_totalaspirants'),     
     path('voting_ballot/', views.voting_ballot, name='voting_ballot'),     
     path('set_currentelection/', views.set_currentelection, name='set_currentelection'),     
+    path('get_selected_aspirants/', views.get_selected_aspirants, name='get_selected_aspirants'),     
+    path('cast_vote/', views.cast_vote, name='cast_vote'),     
+    path('results/<str:election_id>/', views.results, name='results'),     
+    path('get_results/<str:election_id>/', views.get_results, name='get_results'),     
+    path('print_results/<str:election_id>/', views.print_results, name='print_results'),     
+    path('detailed_report/', views.detailed_report, name='detailed_report'),     
 ]

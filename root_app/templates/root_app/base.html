@@ -23,9 +23,7 @@
 
 
 
-  <!-- endinject -->
-  <link rel="shortcut icon" href="{% static 'root_app/images/favicon.png' %}" />
-
+  
   <link rel="stylesheet" href="{% static 'root_app/alert_toaster_css/sweetalert/sweetalert.css' %}">
   <link rel="stylesheet" href="{% static 'root_app/alert_toaster_css/toastr/toastr.min.css' %}">
 
@@ -38,6 +36,7 @@
 
 </head>
 <body>
+  
 
   <div class="row" id="proBanner">
     <div class="col-12">
@@ -58,20 +57,9 @@
       <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
         <ul class="navbar-nav mr-lg-2">
           <li class="nav-item nav-profile dropdown">
-            <a class="nav-link" href="#" data-toggle="dropdown" id="profileDropdown">
-              <img src="{% static 'root_app/images/faces/face5.jpg' %}" alt="profile"/>
+            <a class="nav-link" href="#">
               <span class="nav-profile-name">{{user.full_name}}</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-              <a class="dropdown-item">
-                <i class="typcn typcn-cog-outline text-primary"></i>
-                Settings
-              </a>
-              <a class="dropdown-item" href="{% url 'authentication_app:logout' %}">
-                <i class="typcn typcn-eject text-primary"></i>
-                Logout
-              </a>
-            </div>
           </li>
           <li class="nav-item nav-user-status dropdown">
               <p class="mb-0">Last login was {{user.last_login}}.</p>
@@ -89,79 +77,40 @@
               <i class="typcn typcn-cog-outline mx-0"></i>
               <span class="count"></span>
             </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
-              <p class="mb-0 font-weight-normal float-left dropdown-header">Messages</p>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+              <p class="mb-0 font-weight-normal float-left dropdown-header">Settings</p>
+        
               <a class="dropdown-item preview-item">
                 <div class="preview-thumbnail">
-                    <img src="images/faces/face4.jpg" alt="image" class="profile-pic">
+                  <div class="preview-icon bg-info">
+                    <i class="mdi mdi-earth mx-0"></i> 
+                  </div>
                 </div>
-                <div class="preview-item-content flex-grow">
-                  <h6 class="preview-subject ellipsis font-weight-normal">David Grey
-                  </h6>
-                  <p class="font-weight-light small-text text-muted mb-0">
-                    The meeting is cancelled
-                  </p>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject font-weight-normal">Institution Info</h6>
                 </div>
               </a>
-              <a class="dropdown-item preview-item">
+
+              <a class="dropdown-item preview-item" href="">
                 <div class="preview-thumbnail">
-                    <img src="images/faces/face2.jpg" alt="image" class="profile-pic">
+                  <div class="preview-icon bg-warning">
+                    <i class="mdi mdi-database mx-0"></i>
+                  </div>
                 </div>
-                <div class="preview-item-content flex-grow">
-                  <h6 class="preview-subject ellipsis font-weight-normal">Tim Cook
-                  </h6>
-                  <p class="font-weight-light small-text text-muted mb-0">
-                    New product launch
-                  </p>
-                </div>
-              </a>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                    <img src="images/faces/face3.jpg" alt="image" class="profile-pic">
-                </div>
-                <div class="preview-item-content flex-grow">
-                  <h6 class="preview-subject ellipsis font-weight-normal"> Johnson
-                  </h6>
-                  <p class="font-weight-light small-text text-muted mb-0">
-                    Upcoming board meeting
-                  </p>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject font-weight-normal">System Settings</h6>
                 </div>
               </a>
             </div>
           </li>
           <li class="nav-item dropdown mr-0">
             <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center" id="notificationDropdown" href="#" data-toggle="dropdown">
-              <i class="typcn typcn-bell mx-0"></i>
+              <i class="mdi mdi-account mx-0"></i>
               <span class="count"></span>
             </a>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
-              <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-success">
-                    <i class="typcn typcn-info mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <h6 class="preview-subject font-weight-normal">Application Error</h6>
-                  <p class="font-weight-light small-text mb-0 text-muted">
-                    Just now
-                  </p>
-                </div>
-              </a>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-warning">
-                    <i class="typcn typcn-cog-outline mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <h6 class="preview-subject font-weight-normal">Settings</h6>
-                  <p class="font-weight-light small-text mb-0 text-muted">
-                    Private message
-                  </p>
-                </div>
-              </a>
+              <p class="mb-0 font-weight-normal float-left dropdown-header">User Settings</p>
+        
               <a class="dropdown-item preview-item">
                 <div class="preview-thumbnail">
                   <div class="preview-icon bg-info">
@@ -169,10 +118,18 @@
                   </div>
                 </div>
                 <div class="preview-item-content">
-                  <h6 class="preview-subject font-weight-normal">New user registration</h6>
-                  <p class="font-weight-light small-text mb-0 text-muted">
-                    2 days ago
-                  </p>
+                  <h6 class="preview-subject font-weight-normal">{{user.first_name}}</h6>
+                </div>
+              </a>
+
+              <a class="dropdown-item preview-item" href="{% url 'authentication_app:logout' %}">
+                <div class="preview-thumbnail">
+                  <div class="preview-icon bg-warning">
+                    <i class="mdi mdi-logout mx-0"></i>
+                  </div>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject font-weight-normal">Logout</h6>
                 </div>
               </a>
             </div>
@@ -491,13 +448,27 @@
                 {% endif %}
 
                 {% if perms.root_app.view_detailed_report %}
-                <li class="nav-item"> <a class="nav-link" href=""> Detailed Report </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'root_app:detailed_report' %}"> Detailed Report </a></li>
                 {% endif %}
               </ul>
             </div>
           </li>
           
           {% endif %}
+
+          {% if user.user_type == 'user' %}
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'root_app:voting_ballot' %}">
+              
+                <i class="mdi mdi-check menu-icon"></i>
+                <span class="menu-title">Vote</span>
+              
+            </a>
+          </li>
+
+          {% endif %}
+          
         </ul>
       </nav>
       <!-- partial -->

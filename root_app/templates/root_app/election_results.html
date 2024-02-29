@@ -39,7 +39,15 @@
                                     <td>{{data.election.electoral_comm}}</td>
                                     <td>
                                         {% if perms.root_app.view_results %}
-                                            <a href="" class="btn btn-sm btn-primary"> View Results <i class="mdi mdi-eye"></i></a>
+                                            {% if current_election.election.id == data.election.id %}
+                                            <a href="{% url 'root_app:results' data.election.id %}" class="btn btn-sm btn-success" title="Current election"> View Results <i class="mdi mdi-eye"></i></a>
+                                            {% else %}
+                                            <a href="{% url 'root_app:results' data.election.id %}" class="btn btn-sm btn-primary"> View Results <i class="mdi mdi-eye"></i></a>
+                                            {% endif %}
+                                        {% endif %}
+
+                                        {% if perms.root_app.print_results %}
+                                            <a href="{% url 'root_app:print_results' data.election.id %}" class="btn btn-sm btn-info" title="Current election"> Print <i class="mdi mdi-printer"></i></a>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -55,9 +63,16 @@
                                 <td>
 
                                     {% if perms.root_app.view_results %}
-                                        <a href="" class="btn btn-sm btn-primary"> View Results <i class="mdi mdi-eye"></i></a>
+                                        {% if current_election.election.id == data.id %}
+                                        <a href="{% url 'root_app:results' data.id %}" class="btn btn-sm btn-success" title="Current election"> View Results <i class="mdi mdi-eye"></i></a>
+                                        {% else %}
+                                        <a href="{% url 'root_app:results' data.id %}" class="btn btn-sm btn-primary"> View Results <i class="mdi mdi-eye"></i></a>
+                                        {% endif %}
                                     {% endif %}
 
+                                    {% if perms.root_app.print_results %}
+                                        <a href="{% url 'root_app:print_results' data.id %}" class="btn btn-sm btn-info" title="Current election"> Print <i class="mdi mdi-printer"></i></a>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}

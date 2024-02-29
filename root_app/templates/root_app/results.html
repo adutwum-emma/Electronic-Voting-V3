@@ -1,0 +1,104 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Election Results {% endblock %}
+
+{% block header %} Election Results {% endblock %}
+
+{% block content %}
+
+    <style>
+        .results-table tr{
+            text-align: center;
+            border-bottom: 1px solid rgb(139, 139, 139);
+        }
+
+        .results-table img{
+            width: 80px;
+            margin: 10px;
+            border-radius: 10px;
+        }
+    </style>
+
+    <input type="hidden" id="results-url" value="{% url 'root_app:get_results' election.id %}">
+
+    <div class="content-wrapper">
+
+        <div class="card">
+            <div class="card-body">
+
+                <h5 class="card-title">{{election.election_name}}'s Results</h5>
+
+                {% for data in election.position_set.all %}
+                    <div class="row mb-5 results-pane">
+                        <div class="col-sm-6">
+                            <div class="table-responsive">
+                                <table class="table mb-3">
+                                    <tr>
+                                        <td>Position: </td>
+                                        <td><strong>{{data.position_name}}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>No of electorates: </td>
+                                        <td>{{total_electorates}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total turn out: </td>
+                                        <td>{{data.total_vote_count}} &nbsp; ({{data.turnout_percentage}}%)</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>Total vote count:</td>
+                                        <td>{{data.total_vote_count}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            
+                            <div class="table-responsive"> 
+                                <table class="results-table">
+                                    <tr>
+                                        <th colspan="2">CANDIDATE</th>
+                                        <th>VOTES COUNT</th>
+                                        <th>(%)</th>
+                                    </tr>
+                                    {% for ele in data.aspirant_set.all %}
+                                        <tr>
+                                            <td><img src="{{ele.passport_picture.url}}" alt=""></td>
+                                            <td style="text-align: left;">{{ele.full_name}}</td>
+                                            <td>{{ele.aspirant_vote_counts}}</td>
+                                            <td>{{ele.aspirant_vote_percentage}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+            
+                        <div class="col-sm-6">
+                            <div class="card">
+                                <div class="card-body">
+                                  <h4 class="card-title">{{data.position_name}}</h4>
+                                  <canvas id="canvas{{forloop.counter}}"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-primary" type="button" id="previous-res"> <i class="mdi mdi-arrow-left-bold"></i> Previous</button>
+                <button class="btn btn-primary" type="button" id="next-res"> Next <i class="mdi mdi-arrow-right-bold"></i> </button>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/vendors/chart.js/Chart.min.js' %}"></script>
+    <!-- End plugin js for this page -->
+    <!-- Custom js for this page-->
+    <script src="{% static 'root_app/scripts/results.js' %}"></script>
+    <!-- End custom js for this page-->
+{% endblock %}

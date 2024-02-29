@@ -44,7 +44,11 @@
                                         {% csrf_token %}
 
                                         {% if perms.root_app.change_election %}
-                                        <a href="{% url 'root_app:edit_election' data.election.id %}" class="btn btn-sm btn-primary"> Edit <i class="mdi mdi-pencil"></i></a>
+                                            {% if current_election.election.id == data.election.id %}
+                                            <a href="{% url 'root_app:edit_election' data.election.id %}" class="btn btn-sm btn-success" title="Current Election"> Edit <i class="mdi mdi-pencil"></i></a>
+                                            {% else %}
+                                            <a href="{% url 'root_app:edit_election' data.election.id %}" class="btn btn-sm btn-primary"> Edit <i class="mdi mdi-pencil"></i></a>
+                                            {% endif %}
                                         {% endif %}
 
                                         {% if perms.root_app.delete_election %}
@@ -67,7 +71,11 @@
                                     {% csrf_token %}
 
                                     {% if perms.root_app.change_election %}
-                                    <a href="{% url 'root_app:edit_election' data.id %}" class="btn btn-sm btn-primary"> Edit <i class="mdi mdi-pencil"></i></a>
+                                        {% if current_election.election.id == data.id %}
+                                        <a href="{% url 'root_app:edit_election' data.id %}" class="btn btn-sm btn-success" title="Current Election"> Edit <i class="mdi mdi-pencil"></i></a>
+                                        {% else %}
+                                        <a href="{% url 'root_app:edit_election' data.id %}" class="btn btn-sm btn-primary"> Edit <i class="mdi mdi-pencil"></i></a>
+                                        {% endif %}
                                     {% endif %}
 
                                     {% if perms.root_app.delete_election %}

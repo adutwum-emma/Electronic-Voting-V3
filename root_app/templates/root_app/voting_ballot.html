@@ -27,8 +27,12 @@
         width: 100%;
         height: 20%;
         transition: 1.2s;
-        background-color: rgba(5, 1, 73, 0.49);
+        background-color: rgba(5, 2, 60, 0.45);
+    }
+
+    label{
         cursor: pointer;
+
     }
 
     .cover i{
@@ -49,74 +53,195 @@
 
     .cover:hover .overlay{
         top: 0;
-        height: 100%;
+        height: 10%;
     }
 
-    .cover:hover i{
+    /* label:hover i{
+        display: block;
+    } */
+
+    input[type="radio"]:checked + label{
+        transition: transform 1s;
+        transform: scale(1.04);
+        opacity: 0.9;
+        box-shadow: 0, 8, 16, 0 rgba(0, 0, 0, 0.1);
+        border-bottom: 3px solid rgb(17, 0, 170);
+    }
+
+    input[type="radio"]:checked + label i{
         display: block;
     }
 
-    input[type="radio"]{
+    .content-wrapper input[type="radio"]{
         display: none;
-    }
-
-    input[type=radio]:checked .cover i::after{
-        display: block;
-    }
+    } 
 
     form{
         transition: 1.2s;
         display: none;
     }
+    
+    thead tr{
+        margin: 10px;
+        text-align: center;
+        border-bottom: 1px solid black;
+    }
+
+    tbody tr{
+        margin: 20px;
+        border-bottom: 1px solid black;
+    }
+
+    tbody tr img{
+        width: 100px;
+        margin: 10px;
+    }
+
 </style>
 
 <div class="content-wrapper">
 
-    <div class="card">
-
-        <div class="card-body">
-
-            {% for data in election.position_set.all %}
-
-            <form class="voting-form">
-
-                <h6 class="card-title">{{data.position_name}}</h6>
-
-                <div class="row">
-
-                    {% for ele in data.aspirant_set.all %}
-
-                    <div class="card col-sm-4 cover">
-                        <label for="person{{ele.id}}">
-                            <input type="radio" name="person{{data.id}}" id="person{{ele.id}}">
-                            <img src="{{ele.passport_picture.url}}" alt="">
-                            <div class="overlay"><h6 class="text-white" style="text-transform: uppercase; text-align: center;">{{ele.ballot_number}}. {{ele.full_name.upper}}</h6></span></div>
-                            <i class="mdi mdi-checkbox-marked-circle-outline icon-xl text-warning"></i>
-                        </label>
-                    </div>
-
-                    {% endfor %}
-
-
-                    <div class="col-sm-12 mt-3 mb-3">
-                        <button class="btn btn-sm btn-danger" type="reset">Clear <i class="mdi mdi-refresh"></i> </button>
-                    </div>
-
+    {% if user.user_type != 'user' %}
+        <div class="card">
+            <div class="card-body">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Notice!</strong> You are not authorized to this page...
                 </div>
-            </form>
-
-            {% endfor %}
+            </div>
         </div>
+    {% elif has_voted %}
+        <div class="card">
+            <div class="card-body">
 
-        <div class="card-footer">
-            <button class="btn btn-info" id="previous-but"> <i class="mdi mdi-arrow-left-bold"></i> Previous </button>
-            <button class="btn btn-info" id="next-but"> Next <i class="mdi mdi-arrow-right-bold"></i> </button>
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Notice!</strong> You have already voted in the current election...
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <td>Current Election: </td>
+                            <td> {{current_election.election.election_name}} </td>
+                        </tr>
+                        <tr>
+                            <td>Election Time: </td>
+                            <td>{{current_election.election.election_date}} {{current_election.election.election_time}}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Ending Time: </td>
+                            <td>{{current_election.election.ending_date}} {{current_election.election.ending_time}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    
+    {% elif not is_permitted %}
+
+    <div class="card">
+        <div class="card-body">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Notice!</strong> You are not allowed to part to take part in this election
+            </div>
         </div>
     </div>
 
+    {% elif election.is_open %}
+        
+        {% csrf_token %}
+
+        <div class="card">
+
+            <div class="card-body">
+                    {% for data in election.position_set.all %}
+
+                    <form class="voting-form" action="{% url 'root_app:cast_vote' %}">
+
+                        <h6 class="card-title">{{data.position_name}}</h6>
+
+                        <div class="row">
+
+                            {% for ele in data.aspirant_set.all %}
+                            <div class="card col-sm-4 mb-3 cover shadow">
+
+                                <input type="radio" class="vote-check" name="person{{data.id}}" value="{{ele.id}}" id="person{{ele.id}}"/>
+
+
+                                <label for="person{{ele.id}}">
+                                    <img src="{{ele.passport_picture.url}}" alt="">
+                                    <div class="overlay"><h6 class="text-white" style="text-transform: uppercase; text-align: center;"><strong>{{ele.ballot_number}}.</strong> {{ele.full_name.upper}}</h6></span></div>
+                                    <i class="mdi mdi-checkbox-marked-circle-outline icon-xl text-success"></i>
+                                </label>
+                            </div>
+
+                            {% endfor %}
+
+
+                            <div class="col-sm-12 mt-3">
+                                <button class="btn btn-sm btn-danger" type="reset">Reset <i class="mdi mdi-refresh"></i> </button>
+                            </div>
+
+                        </div>
+                    </form>
+
+                    {% endfor %}
+                
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-info" id="previous-but" disabled> <i class="mdi mdi-arrow-left-bold"></i> Previous </button>
+                <button class="btn btn-info" id="next-but"> Next <i class="mdi mdi-arrow-right-bold"></i> </button>
+            </div>
+        </div>
+
+    {% else %}
+        <div class="card">
+            <div class="card-body">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Notice!</strong> No election available for you at the moment...
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+
+
+<div class="modal fade" id="confirmation-modal" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6>Confirm your selection</h6>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Position</th>
+                                <th>Selection</th>
+                                <th>Full name</th>
+                                <th>Ballot Number</th>
+                            </tr>
+                        </thead>
+
+                        <tbody style="text-align: center;">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="confirm">Confirm</button>
+                <button class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div> 
+        </div>
+    </div>
 </div>
 
 {% endblock %}
+
 
 {% block scripts %}
     <script src="{% static 'root_app/scripts/voting.js' %}"></script>

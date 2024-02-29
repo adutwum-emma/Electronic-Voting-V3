@@ -1,0 +1,91 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Election Results {% endblock %}
+
+{% block header %} Elections Results {% endblock %}
+
+
+{% block content %}
+    <div class="content-wrapper">
+        <div class="card" id="results-rep">
+            <div class="card-body">
+                <h5 class="card-title text-center">{{current_election.election.election_name.upper}}</h5>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <td>Election year: </td>
+                            <td>{{current_election.election.election_year}}</td>
+                        </tr>
+                        <tr>
+                            <td>Date added: </td>
+                            <td>{{current_election.election.time_stamp}}</td>
+                        </tr>
+                        <tr>
+                            <td>Election date: </td>
+                            <td>{{current_election.election.election_date}} {{current_election.election.election_time}}</td>
+                        </tr>
+                        <tr>
+                            <td>Ending date: </td>
+                            <td>{{current_election.election.ending_date}} {{current_election.election.ending_time}}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Electoral commissioner</td>
+                            <td>{{current_election.election.electoralcommissioner.user.full_name}}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h6 class="card-title mt-4">Election Report</h6> <hr>
+                {% for data in election.position_set.all %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tr>
+                                <td>Position</td>
+                                <td>{{data.position_name.upper}}</td>
+                            </tr>
+                            <tr>
+                                <td>Number of electorates</td>
+                                <td>{{total_electorates}}</td>
+                            </tr>
+                            <tr>
+                                <td>Total turnout</td>
+                                <td>{{data.total_vote_count}} &nbsp; ({{data.turnout_percentage}}%)</td>
+                            </tr>
+                            <tr>
+                                <td>Total vote count</td>
+                                <td>{{data.total_vote_count}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="table-responsive mb-5">
+                        <table class="table mt-3">
+                            <tr>
+                                <th colspan="2">Candidate</th>
+                                <th>Vote count</th>
+                                <th>(%)</th>
+                            </tr>
+
+                            {% for ele in data.aspirant_set.all %}
+                            <tr>
+                                <td><img src="{{ele.passport_picture.url}}" alt=""></td>
+                                <td>{{ele.full_name}}</td>
+                                <td>{{ele.aspirant_vote_counts}}</td>
+                                <td>{{ele.aspirant_vote_percentage}}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/printer/jQuery.print.min.js' %}"></script>
+    <script src="{% static 'root_app/scripts/print-report.js' %}"></script>
+{% endblock %}

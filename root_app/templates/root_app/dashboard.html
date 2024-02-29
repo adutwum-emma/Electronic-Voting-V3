@@ -143,6 +143,33 @@
     </div>
 
     {% endif %}
+  
+  {% else %}
+    <div class="row">
+      <div class="col-sm-12">
+          <div class="card">
+
+            <div class="table-responsive">
+              <table class="table">
+                  <tr>
+                      <td>Current Election: </td>
+                      <td> {{current_election.election.election_name}} </td>
+                  </tr>
+                  <tr>
+                      <td>Election Time: </td>
+                      <td>{{current_election.election.election_date}} {{current_election.election.election_time}}</td>
+                  </tr>
+  
+                  <tr>
+                      <td>Ending Time: </td>
+                      <td>{{current_election.election.ending_date}} {{current_election.election.ending_time}}</td>
+                  </tr>
+              </table>
+          </div>
+
+          </div>
+      </div>
+    </div>
   {% endif %}
 
   </div>

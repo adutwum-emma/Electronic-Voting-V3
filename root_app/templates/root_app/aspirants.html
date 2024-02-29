@@ -97,6 +97,7 @@
                             {% for data in aspirants %}
                                 
                                 <tr id="aspirant{{data.id}}">
+                                    {% csrf_token %}
                                     <td> <img src="{{data.passport_picture.url}}" alt=""> </td>
                                     <td>{{data.full_name}}</td>
                                     <td>{{data.election.election_name}}</td>

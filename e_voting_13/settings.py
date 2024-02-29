@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -68,7 +69,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'root_app.context_processors.date_today',
-                'root_app.context_processors.current_election'
+                'root_app.context_processors.current_election',
+                'root_app.context_processors.total_electorates',
             ],
         },
     },
@@ -138,3 +140,5 @@ MEDIA_URL = 'media/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+INSTITUTION_INFO = os.path.join(BASE_DIR, 'files', 'institution_info.txt')
