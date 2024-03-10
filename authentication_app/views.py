@@ -23,6 +23,9 @@ def login(request):
 
         if user is not None:
 
+            if not user.is_active:
+                return JsonResponse({'code':400, 'message':'Your account is inactive, contact admin'})
+
             if user.user_type == 'superuser':
                 request.session['member_id'] = user.id
                 auth.login(request, user)

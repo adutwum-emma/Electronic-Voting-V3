@@ -70,4 +70,7 @@ urlpatterns = [
     path('get_results/<str:election_id>/', views.get_results, name='get_results'),     
     path('print_results/<str:election_id>/', views.print_results, name='print_results'),     
     path('detailed_report/', views.detailed_report, name='detailed_report'),     
+    path('send_password_link/', views.send_password_link, name='send_password_link'),     
+    path('general_report/', views.general_report, name='general_report'),     
+    path('institution_info/', views.institution_info, name='institution_info'),     
 ]

@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, AbstractUser, UserManager
+from django.contrib.auth.models import AbstractUser, UserManager
 
 class UserManager(UserManager):
 
@@ -93,6 +93,10 @@ class User(AbstractUser):
             return 'superuser'
         else:
             return 'user'
+    
+    @property
+    def is_active(self):
+        return self.active
 
     USERNAME_FIELD = 'username'
 

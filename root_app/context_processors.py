@@ -1,5 +1,5 @@
 from datetime import datetime
-from root_app.models import CurrentElection, PollingStation, ElectorateProfile, Election
+from root_app.models import CurrentElection, ElectorateProfile, Election, InstitutionInfo
 from authentication_app.models import User
 
 def date_today(request):
@@ -41,3 +41,17 @@ def total_electorates(request):
     return {
         'total_electorates':total
     }
+
+def institution_info(request):
+    
+    try:
+        inst_info = InstitutionInfo.objects.get(id=1)
+
+        context = {
+            'institution':inst_info
+        }
+
+        return context
+    
+    except Exception:
+        return context

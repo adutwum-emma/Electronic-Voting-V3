@@ -1,0 +1,234 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} General Report {% endblock %}
+
+{% block header %} General Report {% endblock %}
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="card">
+        <div class="card-body" id="general-rp">
+            <h6 class="card-title">General Report</h6>
+            <p class="card-description">General report about all system entities</p>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <td>Number of groups</td>
+                        <td>{{group.count}}</td>
+                    </tr>
+                    <tr>
+                        <td>Groups</td>
+                        <td>
+                            <table>
+                                {% for data in group %}
+                                <tr>
+                                    <td>{{data.name}}</td>
+                                    <td>{{data.user_set.count}}</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+    
+                    <tr>
+                        <td>Number of users</td>
+                        <td>{{users.count}}</td>
+                    </tr>
+                    <tr>
+                        <td>User types</td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>Superuser</td>
+                                    <td>{{superuser}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Staff</td>
+                                    <td>{{staff}}</td>
+                                </tr>
+                                <tr>
+                                    <td>User</td>
+                                    <td>{{common_user}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Number of programmes</td>
+                        <td>{{programmes.count}}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Programmes</td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <th>Programme</th>
+                                    <th>No. of classes</th>
+                                </tr>
+
+                                {% for data in programmes %}
+                                <tr>
+                                    <td>{{data.programme_name}}</td>
+                                    <td>{{data.yearclass_set.count}}</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Number of classes</td>
+                        <td>{{yearclass.count}}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Classes</td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <th>Class</th>
+                                    <th>No. of students</th>
+                                </tr>
+
+                                {% for data in yearclass %}
+                                <tr>
+                                    <td>{{data.class_name}}</td>
+                                    <td>{{data.electorateprofile_set.count}}</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Number of halls or houses</td>
+                        <td>{{halls.count}}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Number of polling stations</td>
+                        <td>{{polling_sation.count}}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Polling stations</td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <th>Polling station</th>
+                                    <th>No. of electorates</th>
+                                </tr>
+
+                                {% for data in polling_sation %}
+                                <tr>
+                                    <td>{{data.name}}</td>
+                                    <td>{{data.electorateprofile_set.count}}</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Number of elections</td>
+                        <td>{{elections.count}}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Elections</td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <th>Election</th>
+                                    <th>No of aspirants</th>
+                                </tr>
+    
+                                {% for data in elections %}
+                                <tr>
+                                    <td>{{data.election_name}}</td>
+                                    <td>{{data.aspirant_set.count}}</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Number of positions</td>
+                        <td>{{positions.count}}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Positions breakdown</td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <th>Election</th>
+                                    <th>No. of positions</th>
+                                </tr>
+
+                                {% for data in elections %}
+                                <tr>
+                                    <td>{{data.election_name}}</td>
+                                    <td>{{data.position_set.count}}</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Total aspirants</td>
+                        <td>{{aspirants.count}}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Total electorates</td>
+                        <td>{{electorates.count}}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Number of verified electorates</td>
+                        <td>{{verified_electorates.count}}</td>
+                    </tr>
+                    <tr>
+                        <td>Verification breakdown</td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>Normal verification</td>
+                                    <td>{{normal}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Self verification</td>
+                                    <td>{{self}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <button class="btn btn-primary" id="print-gen-rep"><i class="mdi mdi-printer"></i> PRINT</button>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/printer/jQuery.print.min.js' %}"></script>
+    <script src="{% static 'root_app/scripts/print-gen-report.js' %}"></script>
+{% endblock %}

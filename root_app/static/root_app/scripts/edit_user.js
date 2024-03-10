@@ -24,7 +24,7 @@ function editUser(){
                 <span>Saving...</span>`
             ).prop('disabled', true)
 
-            $('#edit-user').find('input[type=text], input[type=email], input[type=number], select').prop('disabled', true)
+            $('#edit-user').find('input[type=text], input[type=email], input[type=number], select, checkbox').prop('disabled', true)
         },
 
         success: function(response){
@@ -37,7 +37,7 @@ function editUser(){
 
             $('#save-button').text('SAVE CHANGES').prop('disabled', false)
 
-            $('#edit-user').find('input[type=text], input[type=email], input[type=number], select').prop('disabled', false)            
+            $('#edit-user').find('input[type=text], input[type=email], input[type=number], select, checkbox').prop('disabled', false)            
         },
 
         error: function(){
@@ -46,7 +46,7 @@ function editUser(){
 
             $('#save-button').text('SAVE').prop('disabled', false)
 
-            $('#new-user').find('input[type=text], input[type=email], input[type=number], select').prop('disabled', false)
+            $('#edit-user').find('input[type=text], input[type=email], input[type=number], select, checkbox').prop('disabled', false)
 
         }
 

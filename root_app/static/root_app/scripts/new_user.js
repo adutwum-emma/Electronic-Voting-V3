@@ -24,7 +24,7 @@ function newUser(){
                 <span>Saving...</span>`
             ).prop('disabled', true)
 
-            $('#new-user').find('input[type=text], input[type=email], input[type=number], select').prop('disabled', true)
+            $('#new-user').find('input[type=text], input[type=email], input[type=number], select, checkbox').prop('disabled', true)
         },
 
         success: function(response){
@@ -38,7 +38,7 @@ function newUser(){
 
             $('#save-button').text('SAVE').prop('disabled', false)
 
-            $('#new-user').find('input[type=text], input[type=email], input[type=number], select').prop('disabled', false)
+            $('#new-user').find('input[type=text], input[type=email], input[type=number], select, checkbox').prop('disabled', false)
             
         },
 
@@ -48,7 +48,7 @@ function newUser(){
 
             $('#save-button').text('SAVE').prop('disabled', false)
 
-            $('#new-user').find('input[type=text], input[type=email], input[type=number], select').prop('disabled', false)
+            $('#new-user').find('input[type=text], input[type=email], input[type=number], select, checkbox').prop('disabled', false)
 
         }
 

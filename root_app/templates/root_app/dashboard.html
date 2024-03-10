@@ -94,49 +94,51 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card">
-          <div class="table-responsive pt-3">
-            <table class="table table-striped project-orders-table">
-              <thead>
-                <tr>
-                  <th class="ml-5">Username</th>
-                  <th>Full name</th>
-                  <th>Date added</th>
-                  <th>Last login</th>
-                  <th>User type</th>
-                  <th>Email</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for data in users %}
-                <tr>
-                  <td>{{data.username}}</td>
-                  <td>{{data.full_name}}</td>
-                  <td>{{data.date_added}}</td>
-                  <td>{{data.last_login}}</td>
-                  <td>{{data.user_type}}</td>
-                  <td title="{{data.email}}">{{data.email|truncatechars:5}}</td>
-                  <td>
-                    <div class="d-flex align-items-center">
-                      {% if perms.root_app.change_user %}
-                      <a href="{% url 'root_app:edit_user' data.id %}" class="btn btn-success btn-sm btn-icon-text mr-3">
-                        Edit
-                        <i class="typcn typcn-edit btn-icon-append"></i>                          
-                      </a>
-                      {% endif %}
-
-                      {% if perms.root_app.view_user %}
-                      <a href="{% url 'root_app:view_user' data.id %}" class="btn btn-info btn-sm btn-icon-text">
-                        View
-                        <i class="mdi mdi-eye"></i>                          
-                      </a>
-                      {% endif %}
-                    </div>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+          <div class="card-body">
+            <div class="table-responsive pt-3">
+              <table class="table table-striped project-orders-table">
+                <thead>
+                  <tr>
+                    <th class="ml-5">Username</th>
+                    <th>Full name</th>
+                    <th>Date added</th>
+                    <th>Last login</th>
+                    <th>User type</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for data in users %}
+                  <tr>
+                    <td>{{data.username}}</td>
+                    <td>{{data.full_name}}</td>
+                    <td>{{data.date_added}}</td>
+                    <td>{{data.last_login}}</td>
+                    <td>{{data.user_type}}</td>
+                    <td title="{{data.email}}">{{data.email|truncatechars:5}}</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        {% if perms.root_app.change_user %}
+                        <a href="{% url 'root_app:edit_user' data.id %}" class="btn btn-success btn-sm btn-icon-text mr-3">
+                          Edit
+                          <i class="typcn typcn-edit btn-icon-append"></i>                          
+                        </a>
+                        {% endif %}
+  
+                        {% if perms.root_app.view_user %}
+                        <a href="{% url 'root_app:view_user' data.id %}" class="btn btn-info btn-sm btn-icon-text">
+                          View
+                          <i class="mdi mdi-eye"></i>                          
+                        </a>
+                        {% endif %}
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -148,25 +150,25 @@
     <div class="row">
       <div class="col-sm-12">
           <div class="card">
-
-            <div class="table-responsive">
-              <table class="table">
-                  <tr>
-                      <td>Current Election: </td>
-                      <td> {{current_election.election.election_name}} </td>
-                  </tr>
-                  <tr>
-                      <td>Election Time: </td>
-                      <td>{{current_election.election.election_date}} {{current_election.election.election_time}}</td>
-                  </tr>
-  
-                  <tr>
-                      <td>Ending Time: </td>
-                      <td>{{current_election.election.ending_date}} {{current_election.election.ending_time}}</td>
-                  </tr>
-              </table>
-          </div>
-
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <td>Current Election: </td>
+                        <td> {{current_election.election.election_name}} </td>
+                    </tr>
+                    <tr>
+                        <td>Election Time: </td>
+                        <td>{{current_election.election.election_date}} {{current_election.election.election_time}}</td>
+                    </tr>
+    
+                    <tr>
+                        <td>Ending Time: </td>
+                        <td>{{current_election.election.ending_date}} {{current_election.election.ending_time}}</td>
+                    </tr>
+                </table>
+            </div>
+            </div>
           </div>
       </div>
     </div>

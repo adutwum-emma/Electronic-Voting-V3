@@ -71,6 +71,7 @@ TEMPLATES = [
                 'root_app.context_processors.date_today',
                 'root_app.context_processors.current_election',
                 'root_app.context_processors.total_electorates',
+                'root_app.context_processors.institution_info',
             ],
         },
     },
@@ -142,3 +143,12 @@ MEDIA_URL = 'media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 INSTITUTION_INFO = os.path.join(BASE_DIR, 'files', 'institution_info.txt')
+
+#Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = ''  
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

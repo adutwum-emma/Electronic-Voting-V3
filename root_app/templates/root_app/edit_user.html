@@ -13,7 +13,7 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Edit User</h5>
-            <p class="card-description">Editing a user</p>
+            <p class="card-description">Edit this user with this form</p>
 
             <hr class="mb-3">
             <form action="{% url 'root_app:edit_user' user.id %}" id="edit-user">
@@ -54,11 +54,26 @@
                             {% elif user.user_type == 'staff' %}
                                 <option value="superuser">SUPERUSER</option>
                                 <option value="staff" selected>STAFF</option>
+                            {% elif user.user_type == 'user' %}
+                                <option value="user" selected>USER</option>
                             {% else %}
                                 <option value="superuser">SUPERUSER</option>
                                 <option value="staff">STAFF</option>
                             {% endif %}
                         </select>
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <div class="form-check form-check-flat form-check-primary">
+                            <label for="status" class="form-check-label">
+                                {% if user.is_active %}
+                                    <input type="checkbox" name="status" id="status" class="form-check-input" checked>
+                                {% else %}
+                                    <input type="checkbox" name="status" id="status" class="form-check-input" >
+                                {% endif %}
+                                Active
+                            </label>
+                        </div>
                     </div>
 
                     <div class="col-md-12">
@@ -67,6 +82,14 @@
                 </div>
         
             </form>
+
+        
+        </div>
+
+        <div class="card-body">
+            <input type="hidden" id="user_id" value="{{user.id}}">
+            <p class="card-description">Password settings</p> <hr>
+            <button class="btn btn-success" id="link-button">Send password reset link</button>
         </div>
     </div>
 </div>
@@ -75,4 +98,5 @@
 
 {% block scripts %}
     <script src="{% static 'root_app/scripts/edit_user.js' %}"></script>
+    <script src="{% static 'root_app/scripts/password-reset-link.js' %}"></script>
 {% endblock %}

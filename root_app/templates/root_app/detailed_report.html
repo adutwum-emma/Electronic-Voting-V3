@@ -11,85 +11,27 @@
 
         <div class="card">
             <div class="card-body">
-                <div class="row">
-                    <label for="" class="col-sm-2 col-form-label">Username</label>
-                    <input type="text" name="" id="" class="col-sm-5 form-control" placeholder="Enter the username">
-                    <div class="col-sm-5">
-                        <button class="btn btn-primary"> <i class="mdi mdi-cloud-print"></i> Get Report</button>
+                <form action="{% url 'root_app:detailed_report' %}" id="report-form">
+                    {% csrf_token %}
+                    <div class="row">
+                        <label for="" class="col-sm-2 col-form-label">Username</label>
+                        <input type="text" name="username" id="username" class="col-sm-5 form-control" placeholder="Enter the username">
+                        <div class="col-sm-5">
+                            <button class="btn btn-primary" type="submit"> <i class="mdi mdi-cloud-print"></i> Get Report</button>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
 
-        <div class="card mt-3">
-            <div class="card-body">
-                <h6 class="text-muted">User Details</h6> <hr>
-                <div class="row mb-3">
-                    <div class="col-sm-2">Full name :</div>
-                    <div class="col-sm-8"></div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-sm-2">Email : </div>
-                    <div class="col-sm-8"></div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-sm-2">User type : </div>
-                    <div class="col-sm-8"></div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-sm-2">Date added : </div>
-                    <div class="col-sm-8"></div>
-                </div>
-                <div class="row mb-5">
-                    <div class="col-sm-2">Last login : </div>
-                    <div class="col-sm-8"></div>
-                </div>
-
-                <h6 class="mt-3 text-muted">Other Details</h6> <hr>
-                <div class="row mb-3">
-                    <div class="col-sm-2">Programme : </div>
-                    <div class="col-sm-8"></div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-sm-2">Class : </div>
-                    <div class="col-sm-8"></div>
-                </div>
-                <div class="row mb-5">
-                    <div class="col-sm-2">Hall : </div>
-                    <div class="col-sm-8"></div>
-                </div>
-
-
-                <h6 class="mt-3 text-muted">Election Details</h6> <hr>
-                <div class="row mb-3">
-                    <div class="col-sm-2">Polling station : </div>
-                    <div class="col-sm-8"></div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-sm-12 mb-3">Voting logs : </div>
-                    <div class="col-sm-12 table-responsive">
-                        <table class="table">
-                            <tr>
-                                <th>Election</th>
-                                <th>Position</th>
-                                <th>Time voted</th>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="row mt-5">
-                    <div class="col-sm-12">
-                        <small><span class="text-muted">DATE GENERATED : <script>document.write(new Date())</script></span></small>
-                    </div>
-                </div>
-            </div>
+        <div class="card mt-3" id="details-body">
+            
         </div>
         
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/get_detailed_report.js' %}"></script>
+    <script src="{% static 'root_app/printer/jQuery.print.min.js' %}"></script>
 {% endblock %}

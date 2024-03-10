@@ -308,3 +308,17 @@ class VerifiedElectorate(models.Model):
     
     def __str__(self) -> str:
         return self.user.full_name
+
+class InstitutionInfo(models.Model):
+    logo = models.ImageField(upload_to='company_logo')
+    name = models.CharField(max_length=200)
+    abv_name = models.CharField(max_length=10)
+    email = models.EmailField()
+    phone = models.TextField(max_length=10)
+    description = models.TextField()
+
+    def __str__(self) -> str:
+        return self.name
+    
+    class Meta:
+        verbose_name_plural = ['Institution Info']

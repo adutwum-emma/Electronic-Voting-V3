@@ -1,0 +1,119 @@
+{% extends 'root_app/base.html' %}
+
+{% load static %}
+
+{% block title %} Groups {% endblock %}
+
+{% block header %} Groups {% endblock %}
+
+
+{% block content %}
+
+    <style>
+        .image-cover{
+            position: relative;
+            border-radius: 5px;
+        }
+
+        .image-cover img{
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .overlay{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: 0.8s;
+        }
+
+        .image-cover button{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: 0.8s;
+        }
+
+        .image-cover:hover .overlay{
+            background-color: rgba(0, 0, 0, 0.33);
+        }
+
+        .form-group textarea{
+            height: 200px;
+        }
+    </style>
+
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-body">
+                <form action="{% url 'root_app:institution_info' %}" id="inst-info">
+
+                    {% csrf_token %}
+
+                    <div class="card-title">
+                        Instition's Information
+                    </div>
+    
+                    <div class="row">
+                        <label for="" class="col-form-label col-sm-2">Logo</label>
+    
+                        <div class="col-sm-6">
+                            <div class="col-sm-4 form-group image-cover">
+                                <input type="file" class="file-input" accept=".jpg, .jpeg, .png" name="logo" style="display: none;">
+                                <input type="hidden" name="old_logo" value="{{institution.logo}}">
+                                {% if institution.logo %}
+                                    <img src="{{institution.logo.url}}" id="image" alt="">
+                                {% else %}
+                                    <img src="{% static 'root_app/avatar-images/logo-samp.png' %}" id="image" alt="">
+                                {% endif %}
+                                <div class="overlay"></div>
+                                <button class="btn btn-outline-info image-button" type="button"><i class="mdi mdi-cloud-upload"></i></button>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="row form-group">
+                        <label for="inst_name" class="col-form-label col-sm-2">Institution's name</label>
+                        <input type="text" name="name" id="inst_name" value="{{institution.name}}" class="col-sm-6 form-control" placeholder="Institution's name">
+                    </div>
+    
+                    <div class="row form-group">
+                        <label for="bav_name" class="col-form-label col-sm-2">Abbreviated Name</label>
+                        <input type="text" name="abv_name" id="bav_name" value="{{institution.abv_name}}" class="col-sm-6 form-control" placeholder="Abbreviated name">
+                    </div>
+    
+                    <div class="row form-group">
+                        <label for="bav_name" class="col-form-label col-sm-2">Institution's Email</label>
+                        <input type="email" inputmode="email" name="email" id="email" value="{{institution.email}}" class="col-sm-6 form-control" placeholder="Institution's Email">
+                    </div>
+    
+                    <div class="row form-group">
+                        <label for="phone" class="col-form-label col-sm-2">Phone Number</label>
+                        <input type="number" name="phone" id="phone" value="{{institution.phone}}" inputmode="numeric" pattern="[0-9]{10}" class="col-sm-6 form-control" placeholder="Phone Number">
+                    </div>
+    
+                    <div class="row form-group">
+                        <label for="descrition" class="col-form-label col-sm-2">Other Details</label>
+                        <textarea name="description" id="description" class="form-control col-sm-6">{{institution.description}}</textarea>
+                    </div>
+    
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <button class="btn btn-primary" type="submit" id="save-info-but">SAVE</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'root_app/scripts/image-selection.js' %}"></script>  
+    <script src="{% static 'root_app/scripts/inst-info.js' %}"></script>  
+{% endblock %}

@@ -10,10 +10,12 @@ from root_app.models import (Programme, YearClass,
                              Election, ElectoralCommissioner, 
                              AllowedPollingStation, Programme,
                              Hall, PollingStation, ElectorateProfile, 
-                             Position, Aspirant, VerifiedElectorate, CurrentElection, Vote)
+                             Position, Aspirant, VerifiedElectorate, 
+                             CurrentElection, Vote, InstitutionInfo)
 from openpyxl import load_workbook
 from django.urls import reverse
-from datetime import datetime
+from .emails import send_password_resetlink
+
 
 def is_superuser(user):
 
@@ -177,7 +179,13 @@ def add_user(request):
                 password=generate_password(10),
                 phone_number=phone
             )
-            user.save()
+
+            try:
+                request.POST['status']
+                pass
+            except KeyError:
+                user.active = False
+                user.save()
 
             return JsonResponse({'code':200, 'message':'User added successfully'})
 
@@ -191,7 +199,13 @@ def add_user(request):
                 password=generate_password(10),
                 phone_number=phone
             )
-            user.save()
+            
+            try:
+                request.POST['status']
+                pass
+            except KeyError:
+                user.active = False
+                user.save()
 
             return JsonResponse({'code':200, 'message':'User added successfully'})
         
@@ -206,7 +220,13 @@ def add_user(request):
                 phone_number=phone
 
             )
-            user.save()
+            
+            try:
+                request.POST['status']
+                pass
+            except KeyError:
+                user.active = False
+                user.save()
 
             return JsonResponse({'code':200, 'message':'User added successfully'})
 
@@ -279,6 +299,13 @@ def edit_user(request, user_id):
             user.phone_number=phone
             user.superuser=True
             user.staff=True
+
+            try:
+                request.POST['status']
+                user.active = True
+            except KeyError:
+                user.active = False
+            
             user.save()
 
             return JsonResponse({'code':200, 'message':'User updated successfully'})
@@ -292,7 +319,15 @@ def edit_user(request, user_id):
             user.phone_number=phone
             user.superuser=False
             user.staff=True
+            
+            try:
+                request.POST['status']
+                user.active = True
+            except KeyError:
+                user.active = False
+            
             user.save()
+
             return JsonResponse({'code':200, 'message':'User updated successfully'})
         
         else:
@@ -304,7 +339,15 @@ def edit_user(request, user_id):
             user.phone_number=phone
             user.superuser=False
             user.staff=False
+            
+            try:
+                request.POST['status']
+                user.active = True
+            except KeyError:
+                user.active = False
+            
             user.save()
+
             return JsonResponse({'code':200, 'message':'User updated successfully'})
     else:
 
@@ -1799,7 +1842,7 @@ def position_filter(request):
 
         positions.append(post)
 
-        if request.user.has_perm('root_app.delete_postion'):
+        if request.user.has_perm('root_app.delete_position'):
             post.update({'can_delete':True})
         
         if request.user.has_perm('root_app.change_position'):
@@ -2438,4 +2481,200 @@ def print_results(request, election_id):
 @permission_required('root_app.view_detailed_report', login_url='root_app:permissible_page')
 def detailed_report(request):
 
+    if request.method == 'POST':
+        
+        username = request.POST['username']
+
+        if username == '':
+            return JsonResponse({'code':400, 'message':'Enter a username'})
+        else:
+            if not User.objects.filter(username=username).exists():
+                return JsonResponse({'code':400, 'message':'Username does not exist'})
+            
+            elif User.objects.get(username=username).user_type != 'user':
+                return JsonResponse({'code':400, 'message':'Cannot pull details for such user'})
+            
+            else:
+                user = User.objects.get(username=username)
+
+                user_details = {
+                    'full_name':user.full_name,
+                    'email':user.email,
+                    'time_stamp':user.time_stamp,
+                    'last_login':user.last_login,
+                    'programme':user.electorateprofile.year_class.programme.programme_name,
+                    'class':user.electorateprofile.year_class.class_name,
+                    'hall':user.electorateprofile.hall.hall_name,
+                    'polling_station':user.electorateprofile.polling_station.name,
+                    'voting_logs':[],
+                }
+
+                for data in user.vote_set.all():
+                    user_details['voting_logs'].append(
+                        {
+                            'election':data.election.election_name,
+                            'position':data.position.position_name,
+                            'time_stamp':data.time_stamp
+                        }
+                    )
+                
+                return JsonResponse({'code':200, 'details':user_details})
+                
     return render(request, 'root_app/detailed_report.html')
+
+
+@login_required(login_url='authentication_app:login')
+def send_password_link(request):
+
+    try:
+        user_id = request.POST['user_id']
+
+        user = User.objects.get(id=user_id)
+
+        if send_password_resetlink(request, user, user.email):
+            return JsonResponse({'code':200, 'message':'Email sent successfully'})
+
+        return JsonResponse({'code':400, 'message':'Sending email was unsuccessfull'})
+    
+    except Exception as e:
+        #return JsonResponse({'code':400, 'message':str(e)})
+        return JsonResponse({'code':400, 'message':'Something went wrong, try again'})
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.view_general_report', login_url='root_app:permissible_page')
+def general_report(request):
+
+    group = Group.objects.all()
+    user = User.objects.all()
+    programmes = Programme.objects.all()
+    yearclass = YearClass.objects.all()
+    halls = Hall.objects.all()
+    polling_station = PollingStation.objects.all()
+    elections = Election.objects.all()
+    position = Position.objects.all()
+    aspirants = Aspirant.objects.all()
+    electorates = ElectorateProfile.objects.all()
+    verified = VerifiedElectorate.objects.all()
+
+    context = {
+        'group':group,
+        'users':user,
+        'programmes':programmes,
+        'yearclass':yearclass,
+        'halls':halls,
+        'polling_sation':polling_station,
+        'elections':elections,
+        'positions':position,
+        'aspirants':aspirants,
+        'electorates':electorates,
+        'verified_electorates':verified,
+    }
+
+    user_types = {
+        'superuser':0,
+        'staff': 0,
+        'common_user': 0
+    }
+
+    verification_bd = {
+        'normal':0,
+        'self':0,
+    }
+
+    for data in user:
+
+        if data.user_type == 'superuser':
+            user_types['superuser'] += 1
+        elif data.user_type == 'staff':
+            user_types['staff'] += 1
+        else:
+            user_types['common_user'] += 1
+    
+    for data in verified:
+        if data.user == data.verified_by:
+            verification_bd['self'] += 1
+        else:
+            verification_bd['normal'] += 1
+
+    context.update(verification_bd)       
+    context.update(user_types)
+
+    return render(request, 'root_app/general_report.html', context)
+
+
+@login_required(login_url='authentication_app:login')
+@permission_required('root_app.view_institutioninfo', login_url='root_app:permissible_page')
+def institution_info(request):
+
+    info_id = 1
+
+    if request.method == 'POST':
+        name = request.POST['name']
+        abv_name = request.POST['abv_name']
+        email = request.POST['email']
+        phone = request.POST['phone']
+        description = request.POST['description']
+
+        if not InstitutionInfo.objects.filter(id=info_id).exists():
+            try:
+                logo = request.FILES['logo']
+
+            except KeyError:
+                return JsonResponse({'code':400, 'message':'Institutions logo required'})
+
+        if name == '':
+            return JsonResponse({'code':400, 'message':"Institution's name is required"})
+        
+        elif abv_name == '':
+            return JsonResponse({'code':400, 'message':"Abreviated name is required"})
+        
+        elif email == '':
+            return JsonResponse({'code':400, 'message':"Institution's email is required"})
+        
+        elif phone == '':
+            return JsonResponse({'code':400, 'message':"Institution's phone number is required"})
+
+        try:
+            logo = request.FILES['logo']
+
+        except KeyError:
+
+            logo = request.POST['old_logo']
+
+        if InstitutionInfo.objects.filter(id=info_id).exists():
+            inst_info = InstitutionInfo.objects.get(id=info_id)
+            inst_info.logo=logo
+            inst_info.name=name
+            inst_info.email=email
+            inst_info.phone=phone
+            inst_info.description=description
+            inst_info.save()
+
+            return JsonResponse({'code':200, 'message':'Institution info updated successfully'})
+        else:
+            InstitutionInfo.objects.create(
+                logo=logo,
+                name=name,
+                abv_name=abv_name,
+                email=email,
+                phone=phone,
+                description=description
+            )
+
+            return JsonResponse({'code':200, 'message':'Institution info created succesfully'})
+    
+    else:
+
+        try:
+
+            inst_info = InstitutionInfo.objects.get(id=info_id)
+
+            context = {
+                'institution':inst_info
+            }
+
+            return render(request, 'root_app/institution_info.html', context)
+        
+        except InstitutionInfo.DoesNotExist:
+            return render(request, 'root_app/institution_info.html')
