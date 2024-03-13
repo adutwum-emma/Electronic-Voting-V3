@@ -356,7 +356,7 @@ def edit_user(request, user_id):
             user = User.objects.get(id=user_id)
             
             context = {
-                'user':user
+                'user_det':user
             }
 
             return render(request, 'root_app/edit_user.html', context)
@@ -2535,7 +2535,7 @@ def send_password_link(request):
             return JsonResponse({'code':200, 'message':'Email sent successfully'})
 
         return JsonResponse({'code':400, 'message':'Sending email was unsuccessfull'})
-    
+
     except Exception as e:
         #return JsonResponse({'code':400, 'message':str(e)})
         return JsonResponse({'code':400, 'message':'Something went wrong, try again'})

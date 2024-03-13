@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from authentication_app.models import User
 from django.contrib.auth import authenticate
@@ -8,6 +8,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from root_app.models import VerifiedElectorate, Vote, CurrentElection
 from e_voting_13.random_password import generate_password
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from root_app.tokens import account_activation_token
 
 
 def login(request):
@@ -109,3 +112,25 @@ def self_verification(request):
             return JsonResponse({'code':400, 'message':'Username or Email do not exist'})
     
     return render(request, 'authentication_app/self_verification.html')
+
+
+def password_reset(request, user_id, token):
+
+    print(force_str(urlsafe_base64_decode(user_id)))
+
+    
+    user = get_object_or_404(User, pk=force_str(urlsafe_base64_decode(user_id)))
+
+    if request.method == 'POST':
+        new_password = request.POST['password']
+        con_password = request.POST['con_password']
+
+        if new_password != con_password:
+            return JsonResponse({'code':400, 'message':'Passwords donot match'})
+        user.set_password(new_password)
+        user.save()
+        return JsonResponse({'code':200, 'message':'Password changed successfully'})
+    
+    if not user and account_activation_token.check_token(user, token):
+        return HttpResponse('Invalid URL')
+    return render(request, 'authentication_app/password_reset.html')
