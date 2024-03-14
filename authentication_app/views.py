@@ -11,6 +11,7 @@ from e_voting_13.random_password import generate_password
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from root_app.tokens import account_activation_token
+from django.contrib import messages
 
 
 def login(request):
@@ -33,6 +34,11 @@ def login(request):
                 request.session['member_id'] = user.id
                 auth.login(request, user)
 
+                try:
+                    request.POST['keep_me']
+                except KeyError:
+                    request.session.set_expiry(1800)
+
                 if next_url:
                     return JsonResponse({'code':200, 'url':next_url})
                 
@@ -41,6 +47,11 @@ def login(request):
             elif user.user_type == 'staff':
                 request.session['member_id'] = user.id
                 auth.login(request, user)
+                
+                try:
+                    request.POST['keep_me']
+                except KeyError:
+                    request.session.set_expiry(1800)
 
                 if next_url:
                     return JsonResponse({'code':200, 'url':next_url})
@@ -58,8 +69,14 @@ def login(request):
                     # elif Vote.objects.filter(user=user, election=current_election.election):
                     #     return JsonResponse({'code':400, 'message':'You have voted already'})
 
+
                 request.session['member_id'] = user.id
                 auth.login(request, user)
+
+                try:
+                    request.POST['keep_me']
+                except KeyError:
+                    request.session.set_expiry(1800)
 
                 if next_url:
                     return JsonResponse({'code':200, 'url':next_url})
@@ -125,12 +142,21 @@ def password_reset(request, user_id, token):
         new_password = request.POST['password']
         con_password = request.POST['con_password']
 
+        if not new_password:
+            return JsonResponse({'code':400, 'message':'New password field required'})
+
         if new_password != con_password:
             return JsonResponse({'code':400, 'message':'Passwords donot match'})
         user.set_password(new_password)
         user.save()
-        return JsonResponse({'code':200, 'message':'Password changed successfully'})
+
+        messages.info(request, "Password changed successfully")
+        return JsonResponse({'code':200, 'message':'Password changed successfully', 'url':reverse('authentication_app:login')})
     
     if not user and account_activation_token.check_token(user, token):
         return HttpResponse('Invalid URL')
-    return render(request, 'authentication_app/password_reset.html')
+    context = {
+        'uid':user_id,
+        'token':token
+    }
+    return render(request, 'authentication_app/password_reset.html', context)
