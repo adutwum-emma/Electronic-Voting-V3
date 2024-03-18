@@ -12,6 +12,7 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from root_app.tokens import account_activation_token
 from django.contrib import messages
+from root_app.emails import send_password_resetlink
 
 
 def login(request):
@@ -34,11 +35,6 @@ def login(request):
                 request.session['member_id'] = user.id
                 auth.login(request, user)
 
-                try:
-                    request.POST['keep_me']
-                except KeyError:
-                    request.session.set_expiry(1800)
-
                 if next_url:
                     return JsonResponse({'code':200, 'url':next_url})
                 
@@ -47,11 +43,6 @@ def login(request):
             elif user.user_type == 'staff':
                 request.session['member_id'] = user.id
                 auth.login(request, user)
-                
-                try:
-                    request.POST['keep_me']
-                except KeyError:
-                    request.session.set_expiry(1800)
 
                 if next_url:
                     return JsonResponse({'code':200, 'url':next_url})
@@ -72,11 +63,6 @@ def login(request):
 
                 request.session['member_id'] = user.id
                 auth.login(request, user)
-
-                try:
-                    request.POST['keep_me']
-                except KeyError:
-                    request.session.set_expiry(1800)
 
                 if next_url:
                     return JsonResponse({'code':200, 'url':next_url})
@@ -160,3 +146,33 @@ def password_reset(request, user_id, token):
         'token':token
     }
     return render(request, 'authentication_app/password_reset.html', context)
+
+
+def forgot_password(request):
+
+    if request.method == 'POST':
+        username = request.POST['username']
+
+        if not username:
+            return JsonResponse({'code':400, 'message':'Enter username or email'})
+
+        if User.objects.filter(username=username).exists():
+            
+            user = User.objects.get(username=username)
+        
+        elif User.objects.filter(email=username).exists():
+
+            user = User.objects.get(email=username)
+
+        else:
+            return JsonResponse({'code':400, 'message':'The email or username you entered does not exist'})
+        
+        if user.user_type == 'user':
+            return JsonResponse({'code':400, 'message':'You are not authorized to permform this action'})
+
+        if send_password_resetlink(request, user, user.email):
+            return JsonResponse({'code':200, 'message':f'A password reset link sent to {user.email} to into your inbox to change your password'})
+        else:
+            return JsonResponse({'code':200, 'message':'Something went wrong, try again. Contact administrator if problem persist.'})
+
+    return render(request, 'authentication_app/forgot_password.html')

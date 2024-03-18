@@ -65,7 +65,7 @@
                         <table class="table mt-3">
                             <tr>
                                 <th colspan="2">Candidate</th>
-                                <th>Vote count</th>
+                                <th class="text-center">Vote count</th>
                                 <th>(%)</th>
                             </tr>
 
@@ -73,7 +73,7 @@
                             <tr>
                                 <td><img src="{{ele.passport_picture.url}}" alt=""></td>
                                 <td>{{ele.full_name}}</td>
-                                <td>{{ele.aspirant_vote_counts}}</td>
+                                <td class="text-center">{{ele.aspirant_vote_counts}}</td>
                                 <td>{{ele.aspirant_vote_percentage}}</td>
                             </tr>
                             {% endfor %}
