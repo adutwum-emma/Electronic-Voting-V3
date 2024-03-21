@@ -13,6 +13,8 @@ from django.utils.http import urlsafe_base64_decode
 from root_app.tokens import account_activation_token
 from django.contrib import messages
 from root_app.emails import send_password_resetlink
+from e_voting_13.sms import mnotify
+from django.contrib.sites.shortcuts import get_current_site
 
 
 def login(request):
@@ -93,6 +95,12 @@ def self_verification(request):
 
         password = generate_password(5)
 
+        protocol = 'https://' if request.is_secure() else 'http://'
+
+        url = reverse('authentication_app:login')
+
+        message = f'#OTP: {password}. Visit {protocol}{get_current_site(request).domain}{url} to start voting.'
+
         if username == '':
             return JsonResponse({'code':400, 'message':'Enter a Username or Email'})
 
@@ -106,8 +114,13 @@ def self_verification(request):
             if user.user_type == 'user':
                 user.set_password(password)
                 user.save()
-                messages.info(request, f'Your code has been sent successfully either into your email or your phone, use that as your password to log in')
-                return JsonResponse({'code':200, 'message':'Code sent successfully', 'url':reverse('authentication_app:login')})
+
+                if mnotify('', 'toskybrown', user.phone_number, message):
+                    
+                    messages.info(request, f'Your code has been sent successfully either into your email or your phone, use that as your password to log in')
+
+                    return JsonResponse({'code':200, 'message':'Code sent successfully', 'url':reverse('authentication_app:login')})
+                return JsonResponse({'code':400, 'message':'Something went wrong, try again.'})
             
             else:
                 return JsonResponse({'code':400, 'message':'User not exist as Electorate'})
