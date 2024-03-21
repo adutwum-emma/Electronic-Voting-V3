@@ -142,7 +142,6 @@ MEDIA_URL = 'media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-INSTITUTION_INFO = os.path.join(BASE_DIR, 'files', 'institution_info.txt')
 
 #Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
