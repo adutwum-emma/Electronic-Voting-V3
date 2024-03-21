@@ -1,6 +1,0 @@
-EMAIL CRIDENTIALS
-email_host_user = 'toskybrowntech@gmail.com'
-email_host_password = 'oolh nolt anoo lhbn'
-
-SMS CRIDENTIALS
-mnotify_api = 'j5USmsBoXbnEQ5dAOhoWB0JdWM9OC86Ve1NAupYrAm6rs'
