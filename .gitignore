@@ -1,2 +1,7 @@
 #Ignore all image files
-*.jpeg, .svg, .txt
+*.jpeg,
+ 
+*.svg,
+
+#Ignore cridential files
+notification_cridentials.txt
