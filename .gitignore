@@ -1,4 +1,2 @@
 #Ignore all image files
-*.jpeg
-*.svg
-*.txt
+*.jpeg, .svg, .txt
